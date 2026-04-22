@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Procevia — Настройки системы</title>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: linear-gradient(145deg, #f1f5f9 0%, #eef2f8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px;
+            background: linear-gradient(135deg, #0891B2, #06B6D4);
+            display: flex;
+            flex-direction: column;
+            z-index: 30;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TopBar */
+        .topbar {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(203, 213, 225, 0.6);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 300px;
+        }
+        .search-wrapper input {
+            width: 100%;
+            height: 40px;
+            padding-left: 2.5rem;
+            padding-right: 1rem;
+            background: linear-gradient(135deg, #ECFEFF, white);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .search-wrapper input:focus {
+            border-color: #22D3EE;
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+        }
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #06B6D4;
+        }
+        .notif-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .notif-btn:hover {
+            background: linear-gradient(145deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.2));
+        }
+        .notif-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #22D3EE, #06B6D4);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 6px 12px -6px rgba(6, 182, 212, 0.4);
+        }
+
+        /* Страница настроек */
+        .settings-container {
+            padding: 1.75rem 2rem 2rem 2rem;
+            max-width: 1280px;
+        }
+
+        /* карточки */
+        .settings-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 1.25rem;
+            border: 1px solid rgba(203, 213, 225, 0.6);
+            overflow: hidden;
+            transition: all 0.2s;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+            background: linear-gradient(135deg, rgba(156, 204, 101, 0.08), rgba(173, 213, 129, 0.03));
+        }
+
+        .stage-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: linear-gradient(135deg, #F9FAFB, white);
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s;
+            margin-bottom: 0.75rem;
+        }
+
+        .stage-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateX(2px);
+        }
+
+        .delete-stage-btn {
+            opacity: 0;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+        }
+
+        .stage-item:hover .delete-stage-btn {
+            opacity: 1;
+        }
+
+        .delete-stage-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .add-stage-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border: 2px solid rgba(156, 204, 101, 0.3);
+            background: linear-gradient(135deg, rgba(156, 204, 101, 0.05), transparent);
+            border-radius: 0.75rem;
+            color: #7CB342;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .add-stage-btn:hover {
+            border-color: #9CCC65;
+            box-shadow: 0 2px 8px rgba(156, 204, 101, 0.2);
+        }
+
+        /* toggle switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d1d5db;
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #14B8A6, #0D9488);
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(28px);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .info-card {
+            padding: 1rem;
+            background: linear-gradient(135deg, #F9FAFB, white);
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .backup-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #F0FDFA, white);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0D9488, #14B8A6);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(20, 184, 166, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #e5e7eb;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            border-color: #14B8A6;
+            background: rgba(20, 184, 166, 0.05);
+        }
+
+        .nav-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.75rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.75);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 1.25rem 1rem;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.2s;
+            pointer-events: none;
+        }
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 72px;
+            }
+            .sidebar .logo-text, .sidebar .menu-label {
+                display: none;
+            }
+            .main-content {
+                margin-left: 72px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-wrapper {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <div class="icon-badge" style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="git-branch" style="color:white;" width="20" height="20"></i>
+            </div>
+            <h1 class="logo-text" style="color:white; font-weight:700; font-size:1.3rem;">Procevia</h1>
+        </div>
+<!-- Найди этот блок в HTML (примерно строки 50-80) -->
+<nav class="nav-menu" id="navMenu">
+    <!-- ЗАМЕНИ ВСЕ ЧТО ВНУТРИ на эти ссылки -->
+    <a href="dashboard.html" class="nav-item">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="tasks.html" class="nav-item">
+        <i data-lucide="check-square"></i>
+        <span>Tasks</span>
+    </a>
+    <a href="workflow.html" class="nav-item">
+        <i data-lucide="git-branch"></i>
+        <span>Workflow</span>
+    </a>
+    <a href="users.html" class="nav-item">
+        <i data-lucide="users"></i>
+        <span>Users</span>
+    </a>
+    <a href="roles.html" class="nav-item">
+        <i data-lucide="shield"></i>
+        <span>Roles</span>
+    </a>
+    <a href="reports.html" class="nav-item">
+        <i data-lucide="bar-chart-3"></i>
+        <span>Reports</span>
+    </a>
+    <a href="settings.html" class="nav-item active">
+        <i data-lucide="settings"></i>
+        <span>Settings</span>
+    </a>
+</nav>        <div style="padding: 0.75rem; border-top: 1px solid rgba(255,255,255,0.2); margin: 0 0.75rem 1rem 0.75rem;">
+            <a href="login.html" class="nav-item" style="margin-bottom:0; justify-content: flex-start; display:flex; align-items:center; text-decoration:none;">
+                <i data-lucide="log-out" width="20" height="20"></i>
+                <span class="menu-label">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content">
+        <div class="topbar">
+            <h2 class="page-title" id="pageTitle">Settings</h2>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="search-wrapper">
+                    <i data-lucide="search" class="search-icon" width="18" height="18"></i>
+                    <input type="text" id="globalSearch" placeholder="Search settings...">
+                </div>
+                <div class="notif-btn" id="notifBtn">
+                    <i data-lucide="bell" width="20" height="20" style="color:#0891B2;"></i>
+                    <span class="notif-dot"></span>
+                </div>
+                <div class="avatar">JD</div>
+            </div>
+        </div>
+        <div class="settings-container" id="pageContent"></div>
+    </div>
+</div>
+<div id="toastMsg" class="toast-msg">✨ Готово</div>
+
+<script>
+    // Меню
+    const menuItems = [
+        { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard' },
+        { id: 'tasks', label: 'Tasks', icon: 'check-square' },
+        { id: 'workflow', label: 'Workflow', icon: 'git-branch' },
+        { id: 'users', label: 'Users', icon: 'users' },
+        { id: 'roles', label: 'Roles', icon: 'shield' },
+        { id: 'reports', label: 'Reports', icon: 'bar-chart-3' },
+        { id: 'settings', label: 'Settings', icon: 'settings' }
+    ];
+
+    let currentPage = 'settings';
+    let workflowStages = [
+        { id: 1, name: 'Plan', color: '#6B7280' },
+        { id: 2, name: 'In Progress', color: '#9CCC65' },
+        { id: 3, name: 'Review', color: '#F59E0B' },
+        { id: 4, name: 'Done', color: '#22C55E' },
+    ];
+
+    // Уведомления
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    // Рендер страницы настроек (полностью аналогично React компоненту)
+    function renderSettingsPage() {
+        const container = document.getElementById('pageContent');
+        if (!container) return;
+
+        // Строим HTML вручную, но с привязкой событий после рендера
+        container.innerHTML = `
+            <div class="space-y-6">
+                <!-- Workflow Stage Management -->
+                <div class="settings-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, rgba(156,204,101,0.08), rgba(173,213,129,0.03));">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #9CCC65, #AED581); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i data-lucide="settings" width="20" height="20" style="color:white;"></i>
+                            </div>
+                            <div>
+                                <h3 style="font-weight: 700; color: #111827;">Workflow Stage Management</h3>
+                                <p style="font-size: 0.8rem; color: #6B7280;">Configure and customize workflow stages</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div id="stagesList"></div>
+                        <button id="addStageBtn" class="add-stage-btn" style="margin-top: 0.5rem;">
+                            <i data-lucide="plus" width="18" height="18"></i> Add New Stage
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="settings-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, rgba(20,184,166,0.08), rgba(13,148,136,0.03));">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #14B8A6, #0D9488); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i data-lucide="bell" width="20" height="20" style="color:white;"></i>
+                            </div>
+                            <div>
+                                <h3 style="font-weight: 700; color: #111827;">Notification Settings</h3>
+                                <p style="font-size: 0.8rem; color: #6B7280;">Manage notification preferences</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div id="notificationsList"></div>
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="settings-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, rgba(20,184,166,0.08), rgba(13,148,136,0.03));">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #14B8A6, #0D9488); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i data-lucide="info" width="20" height="20" style="color:white;"></i>
+                            </div>
+                            <div>
+                                <h3 style="font-weight: 700; color: #111827;">System Information</h3>
+                                <p style="font-size: 0.8rem; color: #6B7280;">Current system status and details</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div class="info-grid" id="systemInfoGrid"></div>
+                    </div>
+                </div>
+
+                <!-- Backup and Export -->
+                <div class="settings-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, rgba(20,184,166,0.08), rgba(13,148,136,0.03));">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #14B8A6, #0D9488); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i data-lucide="database" width="20" height="20" style="color:white;"></i>
+                            </div>
+                            <div>
+                                <h3 style="font-weight: 700; color: #111827;">Backup and Export</h3>
+                                <p style="font-size: 0.8rem; color: #6B7280;">Manage system backups and data export</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div id="backupSection"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Заполняем stages
+        const stagesContainer = document.getElementById('stagesList');
+        function renderStages() {
+            stagesContainer.innerHTML = '';
+            workflowStages.forEach(stage => {
+                const stageDiv = document.createElement('div');
+                stageDiv.className = 'stage-item';
+                stageDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 20px; height: 20px; border-radius: 0.5rem; background-color: ${stage.color}; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></div>
+                        <span style="font-weight: 600; color:#111827;">${escapeHtml(stage.name)}</span>
+                    </div>
+                    <button class="delete-stage-btn" data-id="${stage.id}">
+                        <i data-lucide="trash-2" width="16" height="16" style="color:#EF4444;"></i>
+                    </button>
+                `;
+                stagesContainer.appendChild(stageDiv);
+            });
+            // вешаем удаление
+            document.querySelectorAll('.delete-stage-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(btn.getAttribute('data-id'));
+                    workflowStages = workflowStages.filter(s => s.id !== id);
+                    renderStages();
+                    showToast(`Этап удален`);
+                    reinitLucideInContainer(stagesContainer);
+                });
+            });
+            reinitLucideInContainer(stagesContainer);
+        }
+        renderStages();
+
+        // Добавление стадии
+        const addBtn = document.getElementById('addStageBtn');
+        if(addBtn) {
+            addBtn.addEventListener('click', () => {
+                const newName = prompt('Название нового этапа:', 'New Stage');
+                if(newName && newName.trim()) {
+                    const newId = Date.now();
+                    const colors = ['#3B82F6', '#8B5CF6', '#EC4899', '#F97316'];
+                    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                    workflowStages.push({ id: newId, name: newName.trim(), color: randomColor });
+                    renderStages();
+                    showToast(`Этап "${newName}" добавлен`);
+                }
+            });
+        }
+
+        // Notification toggles
+        const notifContainer = document.getElementById('notificationsList');
+        const notifSettings = [
+            { label: 'Email Notifications', desc: 'Receive notifications via email', defaultChecked: true },
+            { label: 'Push Notifications', desc: 'Receive push notifications in browser', defaultChecked: true },
+            { label: 'Task Reminders', desc: 'Get reminded about upcoming deadlines', defaultChecked: true },
+            { label: 'Weekly Reports', desc: 'Receive weekly summary reports', defaultChecked: false },
+        ];
+        notifContainer.innerHTML = '';
+        notifSettings.forEach((setting, idx) => {
+            const item = document.createElement('div');
+            item.className = 'stage-item';
+            item.style.justifyContent = 'space-between';
+            item.innerHTML = `
+                <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">${setting.label}</div>
+                    <div style="font-size: 0.75rem; color: #6B7280;">${setting.desc}</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" class="notif-checkbox" data-setting="${setting.label}" ${setting.defaultChecked ? 'checked' : ''}>
+                    <span class="toggle-slider"></span>
+                </label>
+            `;
+            notifContainer.appendChild(item);
+        });
+        document.querySelectorAll('.notif-checkbox').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                showToast(`${cb.getAttribute('data-setting')}: ${cb.checked ? 'Включено' : 'Выключено'}`);
+            });
+        });
+
+        // System Info
+        const sysGrid = document.getElementById('systemInfoGrid');
+        sysGrid.innerHTML = `
+            <div class="info-card"><div style="color:#6B7280; font-size:0.75rem;">System Version</div><div style="font-weight:800; font-size:1.2rem;">v2.5.3</div></div>
+            <div class="info-card"><div style="color:#6B7280; font-size:0.75rem;">Last Updated</div><div style="font-weight:800; font-size:1.2rem;">Feb 10, 2026</div></div>
+            <div class="info-card" style="border-color:#22C55E30;"><div style="color:#6B7280; font-size:0.75rem;">Database Status</div><div style="display:flex; align-items:center; gap:0.5rem;"><div style="width:10px;height:10px;background:#22C55E;border-radius:50%;animation:pulse 1.5s infinite;"></div><span style="font-weight:800; color:#22C55E;">Connected</span></div></div>
+            <div class="info-card"><div style="color:#6B7280; font-size:0.75rem;">Storage Used</div><div style="font-weight:800; font-size:1.2rem;">2.3 GB / 10 GB</div></div>
+        `;
+        
+        // Backup & Export
+        const backupDiv = document.getElementById('backupSection');
+        backupDiv.innerHTML = `
+            <div class="backup-card">
+                <div style="display:flex; gap:0.75rem; align-items:center;">
+                    <div style="width:48px;height:48px;background:rgba(20,184,166,0.1);border-radius:0.75rem;display:flex;align-items:center;justify-content:center;"><i data-lucide="database" width="22" height="22" style="color:#14B8A6;"></i></div>
+                    <div><div style="font-weight:600;">Last Backup</div><div style="font-size:0.75rem;color:#6B7280;">February 12, 2026 at 3:00 AM</div></div>
+                </div>
+                <button id="backupNowBtn" class="btn-primary">Backup Now</button>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <button id="exportAllBtn" class="btn-outline">Export All Data</button>
+                <button id="downloadLogsBtn" class="btn-outline">Download Logs</button>
+            </div>
+        `;
+        document.getElementById('backupNowBtn')?.addEventListener('click', () => showToast('✅ Резервное копирование запущено (демо)'));
+        document.getElementById('exportAllBtn')?.addEventListener('click', () => showToast('📀 Экспорт данных выполнен (демо)'));
+        document.getElementById('downloadLogsBtn')?.addEventListener('click', () => showToast('📄 Логи скачаны (демо)'));
+
+        // Инициализируем иконки
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        function reinitLucideInContainer(el) {
+            if (typeof lucide !== 'undefined') lucide.createIcons({ root: el });
+        }
+        // анимация пульсации
+        const style = document.createElement('style');
+        style.textContent = `@keyframes pulse { 0% { opacity:0.4; transform:scale(0.8);} 100% {opacity:1; transform:scale(1);}}`;
+        document.head.appendChild(style);
+    }
+
+    function renderSidebar() {
+        const navContainer = document.getElementById('navMenu');
+        if (!navContainer) return;
+        navContainer.innerHTML = '';
+        menuItems.forEach(item => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-item';
+            if (currentPage === item.id) btn.classList.add('active');
+            const icon = document.createElement('i');
+            icon.setAttribute('data-lucide', item.icon);
+            icon.setAttribute('width', '20');
+            icon.setAttribute('height', '20');
+            const span = document.createElement('span');
+            span.className = 'menu-label';
+            span.innerText = item.label;
+            btn.appendChild(icon);
+            btn.appendChild(span);
+            btn.addEventListener('click', () => navigateTo(item.id));
+            navContainer.appendChild(btn);
+        });
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function navigateTo(pageId) {
+        currentPage = pageId;
+        document.getElementById('pageTitle').innerText = pageId.charAt(0).toUpperCase() + pageId.slice(1);
+        const contentContainer = document.getElementById('pageContent');
+        if (pageId === 'settings') {
+            renderSettingsPage();
+        } else {
+            contentContainer.innerHTML = `<div style="background: rgba(255,255,245,0.7); backdrop-filter: blur(8px); border-radius: 1.5rem; padding: 3rem; text-align: center;"><i data-lucide="${menuItems.find(i=>i.id===pageId)?.icon || 'circle'}" width="48" height="48" style="color:#0891B2;"></i><h2 style="font-size:1.8rem; font-weight:700; margin-top:1rem;">${pageId}</h2><p style="color:#4b5563;">Модуль в разработке. Перейдите в Settings для настроек.</p><button id="backToSettingsBtn" style="margin-top:1.5rem; background:#06B6D4; border:none; padding:0.5rem 1.5rem; border-radius:2rem; color:white; font-weight:600;">Вернуться к настройкам</button></div>`;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            const backBtn = document.getElementById('backToSettingsBtn');
+            if (backBtn) backBtn.addEventListener('click', () => navigateTo('settings'));
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function init() {
+        navigateTo('settings');
+        const search = document.getElementById('globalSearch');
+        if (search) {
+            search.addEventListener('input', (e) => {
+                if (currentPage === 'settings') showToast(`🔍 Поиск: "${e.target.value}" (демо)`);
+            });
+        }
+        const notif = document.getElementById('notifBtn');
+        if(notif) notif.addEventListener('click', () => showToast('У вас нет новых уведомлений'));
+    }
+
+    init();
+</script>
+</body>
+</html>

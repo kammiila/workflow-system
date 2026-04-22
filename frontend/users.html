@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procevia - User Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: linear-gradient(145deg, #f1f5f9 0%, #eef2f8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px;
+            background: linear-gradient(135deg, #0891B2, #06B6D4);
+            display: flex;
+            flex-direction: column;
+            z-index: 30;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TopBar */
+        .topbar {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(203, 213, 225, 0.6);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 0.75rem;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 280px;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            height: 40px;
+            padding-left: 2.5rem;
+            padding-right: 1rem;
+            background: linear-gradient(135deg, #ECFEFF, white);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-wrapper input:focus {
+            border-color: #22D3EE;
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #06B6D4;
+        }
+
+        .notif-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            border: none;
+        }
+
+        .notif-btn:hover {
+            background: linear-gradient(145deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.2));
+        }
+
+        .notif-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #22D3EE, #06B6D4);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 6px 12px -6px rgba(6, 182, 212, 0.4);
+            cursor: pointer;
+        }
+
+        .right-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Навигационные элементы */
+        .nav-menu {
+            flex: 1;
+            padding: 1.5rem 0.75rem;
+        }
+
+        .nav-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.75rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .logout-section {
+            padding: 1rem 0.75rem 1.5rem 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: auto;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.2s;
+            pointer-events: none;
+        }
+
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* User Management Styles */
+        .card {
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .action-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .status-badge {
+            transition: all 0.2s ease;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            .search-wrapper {
+                display: none;
+            }
+            .page-title {
+                font-size: 1.2rem;
+            }
+            .right-section {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="git-branch" style="color:white;" width="20" height="20"></i>
+            </div>
+            <h1 class="logo-text" style="color:white; font-weight:700; font-size:1.3rem;">Procevia</h1>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i>
+                <span class="nav-label">Dashboard</span>
+            </a>
+            <a href="tasks.html" class="nav-item">
+                <i data-lucide="check-square"></i>
+                <span class="nav-label">Tasks</span>
+            </a>
+            <a href="workflow.html" class="nav-item">
+                <i data-lucide="git-branch"></i>
+                <span class="nav-label">Workflow</span>
+            </a>
+            <a href="users.html" class="nav-item active">
+                <i data-lucide="users"></i>
+                <span class="nav-label">Users</span>
+            </a>
+            <a href="roles.html" class="nav-item">
+                <i data-lucide="shield"></i>
+                <span class="nav-label">Roles</span>
+            </a>
+            <a href="reports.html" class="nav-item">
+                <i data-lucide="bar-chart-3"></i>
+                <span class="nav-label">Reports</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i data-lucide="settings"></i>
+                <span class="nav-label">Settings</span>
+            </a>
+        </nav>
+        
+        <div class="logout-section">
+            <a href="login.html" class="nav-item" style="margin-bottom:0;">
+                <i data-lucide="log-out"></i>
+                <span class="nav-label">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- TopBar -->
+        <div class="topbar">
+            <button class="menu-toggle" id="menuToggle">
+                <i data-lucide="menu" width="20" height="20" style="color:#0891B2;"></i>
+            </button>
+            <h2 class="page-title">User Management</h2>
+            <div class="right-section">
+                <div class="search-wrapper">
+                    <i data-lucide="search" class="search-icon" width="18" height="18"></i>
+                    <input type="text" id="globalSearch" placeholder="Search users...">
+                </div>
+                <button class="notif-btn" id="notifBtn">
+                    <i data-lucide="bell" width="20" height="20" style="color:#0891B2;"></i>
+                    <span class="notif-dot"></span>
+                </button>
+                <div class="avatar" id="avatarBtn">JD</div>
+            </div>
+        </div>
+
+        <!-- User Management Content -->
+        <div class="max-w-7xl mx-auto px-4 py-8 w-full">
+            <!-- Stats Card -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 backdrop-blur-sm rounded-2xl border border-white/50 p-6 shadow-lg card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-lg">
+                            <i data-lucide="users" width="24" height="24" style="color:white;"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-extrabold text-cyan-600" id="totalUsers">0</div>
+                    <div class="text-gray-600 text-sm font-medium">Total Users</div>
+                </div>
+            </div>
+
+            <!-- Search and Add User -->
+            <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+                <button id="addUserBtn" class="btn-primary bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2">
+                    <i data-lucide="plus" width="20" height="20"></i>
+                    Add User
+                </button>
+                
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" width="18" height="18"></i>
+                    <input type="text" id="userSearchInput" placeholder="Search users..." class="pl-10 pr-4 py-2 rounded-xl border border-gray-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-64">
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                                <th class="text-left p-4 text-gray-600 font-semibold text-sm">Name</th>
+                                <th class="text-left p-4 text-gray-600 font-semibold text-sm">Email</th>
+                                <th class="text-left p-4 text-gray-600 font-semibold text-sm">Role</th>
+                                <th class="text-left p-4 text-gray-600 font-semibold text-sm">Status</th>
+                                <th class="text-left p-4 text-gray-600 font-semibold text-sm">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Add/Edit User -->
+<div id="userModal" class="modal">
+    <div class="modal-content p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Add User</h3>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" width="24" height="24"></i>
+            </button>
+        </div>
+        <form id="userForm">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Full Name</label>
+                <input type="text" id="userName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                <input type="email" id="userEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Role</label>
+                <select id="userRole" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    <option>Admin</option>
+                    <option>Manager</option>
+                    <option>Team Member</option>
+                    <option>Observer</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Status</label>
+                <select id="userStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    <option>Active</option>
+                    <option>Inactive</option>
+                </select>
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="flex-1 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white py-2 rounded-lg font-semibold">Save</button>
+                <button type="button" id="cancelModal" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-300">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<script>
+lucide.createIcons();
+
+function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// Мобильное меню
+const sidebar = document.getElementById('sidebar');
+const menuToggle = document.getElementById('menuToggle');
+if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+}
+
+// TopBar handlers
+const notifBtn = document.getElementById('notifBtn');
+if (notifBtn) {
+    notifBtn.addEventListener('click', () => showToast('🔔 No new notifications'));
+}
+const avatarBtn = document.getElementById('avatarBtn');
+if (avatarBtn) {
+    avatarBtn.addEventListener('click', () => showToast('👤 User profile'));
+}
+
+// User Management Data
+let users = [
+    { name: 'Sarah Johnson', initials: 'SJ', email: 'sarah.johnson@company.com', role: 'Admin', status: 'Active' },
+    { name: 'Michael Chen', initials: 'MC', email: 'michael.chen@company.com', role: 'Manager', status: 'Active' },
+    { name: 'Emma Williams', initials: 'EW', email: 'emma.williams@company.com', role: 'Team Member', status: 'Active' },
+    { name: 'James Brown', initials: 'JB', email: 'james.brown@company.com', role: 'Team Member', status: 'Active' },
+    { name: 'Lisa Anderson', initials: 'LA', email: 'lisa.anderson@company.com', role: 'Observer', status: 'Inactive' },
+    { name: 'David Lee', initials: 'DL', email: 'david.lee@company.com', role: 'Team Member', status: 'Active' }
+];
+
+let currentEditIndex = -1;
+
+function getInitials(name) {
+    return name.split(' ').map(n => n[0]).join('');
+}
+
+function getRoleColor(role) {
+    switch(role) {
+        case 'Admin': return 'text-purple-600 bg-purple-100';
+        case 'Manager': return 'text-blue-600 bg-blue-100';
+        case 'Team Member': return 'text-green-600 bg-green-100';
+        case 'Observer': return 'text-amber-600 bg-amber-100';
+        default: return 'text-gray-600 bg-gray-100';
+    }
+}
+
+function getStatusBadge(status) {
+    return status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+}
+
+function renderUsers() {
+    const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
+    const filteredUsers = users.filter(user => 
+        user.name.toLowerCase().includes(searchTerm) || 
+        user.email.toLowerCase().includes(searchTerm) || 
+        user.role.toLowerCase().includes(searchTerm)
+    );
+    
+    const tbody = document.getElementById('usersTableBody');
+    document.getElementById('totalUsers').textContent = users.length;
+    
+    tbody.innerHTML = filteredUsers.map((user, idx) => {
+        const originalIndex = users.findIndex(u => u.email === user.email);
+        return `
+            <tr class="border-b border-gray-100 hover:bg-gradient-to-r hover:from-cyan-50/50 hover:to-transparent transition-all">
+                <td class="p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                            ${user.initials}
+                        </div>
+                        <span class="font-medium text-gray-800">${user.name}</span>
+                    </div>
+                 </td>
+                <td class="p-4 text-gray-600">${user.email}</td>
+                <td class="p-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${getRoleColor(user.role)}">
+                        ${user.role}
+                    </span>
+                </td>
+                <td class="p-4">
+                    <span class="status-badge px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(user.status)}">
+                        ${user.status}
+                    </span>
+                </td>
+                <td class="p-4">
+                    <div class="flex items-center gap-2">
+                        <button class="action-btn text-blue-500 hover:text-blue-700" onclick="editUser(${originalIndex})" title="Edit">
+                            <i data-lucide="edit-2" width="18" height="18"></i>
+                        </button>
+                        <button class="action-btn text-green-500 hover:text-green-700" onclick="viewUser(${originalIndex})" title="View">
+                            <i data-lucide="eye" width="18" height="18"></i>
+                        </button>
+                        <button class="action-btn text-red-500 hover:text-red-700" onclick="deleteUser(${originalIndex})" title="Delete">
+                            <i data-lucide="trash-2" width="18" height="18"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    lucide.createIcons();
+}
+
+function openModal(editIndex = -1) {
+    currentEditIndex = editIndex;
+    const modal = document.getElementById('userModal');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    if (editIndex >= 0) {
+        modalTitle.textContent = 'Edit User';
+        const user = users[editIndex];
+        document.getElementById('userName').value = user.name;
+        document.getElementById('userEmail').value = user.email;
+        document.getElementById('userRole').value = user.role;
+        document.getElementById('userStatus').value = user.status;
+    } else {
+        modalTitle.textContent = 'Add User';
+        document.getElementById('userForm').reset();
+    }
+    modal.classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('userModal').classList.remove('active');
+    currentEditIndex = -1;
+}
+
+function saveUser() {
+    const name = document.getElementById('userName').value;
+    const email = document.getElementById('userEmail').value;
+    const role = document.getElementById('userRole').value;
+    const status = document.getElementById('userStatus').value;
+    
+    if (name && email) {
+        if (currentEditIndex >= 0) {
+            users[currentEditIndex] = {
+                ...users[currentEditIndex],
+                name, email, initials: getInitials(name),
+                role, status
+            };
+            showToast('✅ User updated successfully');
+        } else {
+            users.push({
+                name, email, initials: getInitials(name),
+                role, status
+            });
+            showToast('✅ User added successfully');
+        }
+        renderUsers();
+        closeModal();
+    }
+}
+
+function editUser(index) {
+    openModal(index);
+}
+
+function viewUser(index) {
+    const user = users[index];
+    showToast(`👤 ${user.name} - ${user.role}`);
+}
+
+function deleteUser(index) {
+    if (confirm('Are you sure you want to delete this user?')) {
+        users.splice(index, 1);
+        renderUsers();
+        showToast('🗑️ User deleted');
+    }
+}
+
+document.getElementById('addUserBtn').onclick = () => openModal();
+document.getElementById('closeModal').onclick = closeModal;
+document.getElementById('cancelModal').onclick = closeModal;
+document.getElementById('userForm').onsubmit = (e) => {
+    e.preventDefault();
+    saveUser();
+};
+document.getElementById('userSearchInput').oninput = () => renderUsers();
+document.getElementById('globalSearch').oninput = (e) => {
+    document.getElementById('userSearchInput').value = e.target.value;
+    renderUsers();
+};
+
+renderUsers();
+</script>
+</body>
+</html>
