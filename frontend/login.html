@@ -19,7 +19,6 @@ body {
   justify-content: center;
 }
 
-/* Wrapper */
 .wrapper {
   width: 100%;
   padding: 16px;
@@ -29,7 +28,6 @@ body {
   min-height: 100vh;
 }
 
-/* Card */
 .card {
   width: 100%;
   background: rgba(255,255,255,0.97);
@@ -38,7 +36,6 @@ body {
   box-shadow: 0 15px 40px rgba(0,0,0,0.15);
 }
 
-/* Header */
 .header {
   padding: 28px 20px;
   text-align: center;
@@ -70,7 +67,6 @@ body {
   opacity: 0.9;
 }
 
-/* Form */
 .form {
   padding: 24px 20px;
 }
@@ -81,7 +77,6 @@ body {
   font-size: 20px;
 }
 
-/* Inputs */
 .input-group {
   margin-bottom: 16px;
 }
@@ -107,7 +102,6 @@ body {
   outline: none;
 }
 
-/* Button */
 button {
   width: 100%;
   height: 46px;
@@ -120,7 +114,6 @@ button {
   cursor: pointer;
 }
 
-/* Footer */
 .footer {
   text-align: center;
   margin-top: 12px;
@@ -132,7 +125,6 @@ button {
   text-decoration: none;
 }
 
-/* Bottom text */
 .bottom-text {
   text-align: center;
   color: white;
@@ -140,7 +132,6 @@ button {
   font-size: 12px;
 }
 
-/* Flash messages */
 .flash {
   padding: 12px;
   margin-bottom: 16px;
@@ -161,42 +152,34 @@ button {
   border: 1px solid #f5c6cb;
 }
 
-/* ===== TABLET ===== */
 @media (min-width: 600px) {
   .wrapper {
     align-items: center;
   }
-
   .card {
     max-width: 420px;
     border-radius: 24px;
   }
-
   .header {
     padding: 32px 24px;
   }
-
   .form {
     padding: 28px 24px;
   }
 }
 
-/* ===== DESKTOP ===== */
 @media (min-width: 1024px) {
   body {
     overflow: hidden;
   }
-
   .wrapper {
     max-width: 1200px;
   }
-
   .card {
     max-width: 440px;
     margin: auto;
     box-shadow: 0 30px 80px rgba(0,0,0,0.2);
   }
-
   body::before,
   body::after {
     content: '';
@@ -206,14 +189,12 @@ button {
     background: rgba(255,255,255,0.25);
     z-index: 0;
   }
-
   body::before {
     width: 350px;
     height: 350px;
     top: 10%;
     left: 10%;
   }
-
   body::after {
     width: 500px;
     height: 500px;

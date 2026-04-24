@@ -1,227 +1,257 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Procevia - Reports Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8" />
+<title>Procevia - Reports Dashboard</title>
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-            background: linear-gradient(145deg, #f1f5f9 0%, #eef2f8 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
-        /* Layout */
-        .app-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        /* SIDEBAR */
+    body {
+        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        background: linear-gradient(145deg, #f1f5f9 0%, #eef2f8 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .app-wrapper {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 260px;
+        background: linear-gradient(135deg, #0891B2, #06B6D4);
+        display: flex;
+        flex-direction: column;
+        z-index: 30;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+    }
+
+    .main-content {
+        flex: 1;
+        margin-left: 260px;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .topbar {
+        height: 64px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(203, 213, 225, 0.6);
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #111827;
+        letter-spacing: -0.02em;
+    }
+
+    .menu-toggle {
+        display: none;
+        width: 40px;
+        height: 40px;
+        background: rgba(6, 182, 212, 0.1);
+        border-radius: 0.75rem;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+    }
+
+    .search-wrapper {
+        position: relative;
+        width: 280px;
+    }
+
+    .search-wrapper input {
+        width: 100%;
+        height: 40px;
+        padding-left: 2.5rem;
+        padding-right: 1rem;
+        background: linear-gradient(135deg, #ECFEFF, white);
+        border: 1px solid rgba(6, 182, 212, 0.25);
+        border-radius: 0.75rem;
+        font-size: 0.85rem;
+        outline: none;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #06B6D4;
+    }
+
+    .notif-btn {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        border: none;
+    }
+
+    .notif-dot {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        background: #EF4444;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #22D3EE, #06B6D4);
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .right-section {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .nav-menu {
+        flex: 1;
+        padding: 1.5rem 0.75rem;
+    }
+
+    .nav-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0.75rem;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        transition: all 0.2s;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-align: left;
+        text-decoration: none;
+    }
+
+    .nav-item:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        transform: translateX(4px);
+    }
+
+    .nav-item.active {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        color: white;
+    }
+
+    .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .logout-section {
+        padding: 1rem 0.75rem 1.5rem 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        margin-top: auto;
+    }
+
+    .toast-msg {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #1e293b;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        z-index: 999;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: 0.2s;
+        pointer-events: none;
+    }
+
+    .toast-msg.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 260px;
-            background: linear-gradient(135deg, #0891B2, #06B6D4);
-            display: flex;
-            flex-direction: column;
-            z-index: 30;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            transform: translateX(-100%);
         }
-
-        /* MAIN CONTENT */
+        .sidebar.open {
+            transform: translateX(0);
+        }
         .main-content {
-            flex: 1;
-            margin-left: 260px;
+            margin-left: 0;
+        }
+        .menu-toggle {
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
-
-        /* TopBar */
-        .topbar {
-            height: 64px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(203, 213, 225, 0.6);
-            padding: 0 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #111827;
-            letter-spacing: -0.02em;
-        }
-
         .search-wrapper {
-            position: relative;
-            width: 280px;
+            display: none;
         }
-        .search-wrapper input {
-            width: 100%;
-            height: 40px;
-            padding-left: 2.5rem;
-            padding-right: 1rem;
-            background: linear-gradient(135deg, #ECFEFF, white);
-            border: 1px solid rgba(6, 182, 212, 0.25);
-            border-radius: 0.75rem;
-            font-size: 0.85rem;
-            outline: none;
-            transition: all 0.2s;
+        .page-title {
+            font-size: 1.2rem;
         }
-        .search-wrapper input:focus {
-            border-color: #22D3EE;
-            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+        .grid-cols-4 {
+            grid-template-columns: repeat(2, 1fr);
         }
-        .search-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #06B6D4;
-        }
-        .notif-btn {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            cursor: pointer;
-            position: relative;
-        }
-        .notif-btn:hover {
-            background: linear-gradient(145deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.2));
-        }
-        .notif-dot {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 8px;
-            height: 8px;
-            background: #EF4444;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-        .avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #22D3EE, #06B6D4);
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            box-shadow: 0 6px 12px -6px rgba(6, 182, 212, 0.4);
-            cursor: pointer;
-        }
-
-        /* Навигационные элементы */
-        .nav-menu {
-            flex: 1;
-            padding: 1.5rem 0.75rem;
-        }
-        .nav-item {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.75rem;
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.8);
-            transition: all 0.2s;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-align: left;
-            text-decoration: none;
-        }
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: white;
-            transform: translateX(4px);
-        }
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(4px);
-            color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1.5rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        .logout-section {
-            padding: 1rem 0.75rem 1.5rem 0.75rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            margin-top: auto;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .sidebar { width: 72px; }
-            .sidebar .logo-text, .sidebar .nav-label { display: none; }
-            .main-content { margin-left: 72px; }
-            .search-wrapper { width: 160px; }
-            .page-title { font-size: 1.3rem; }
-            .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        .toast-msg {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: #1e293b;
-            color: white;
-            padding: 0.6rem 1.5rem;
-            border-radius: 2rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            z-index: 999;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: 0.2s;
-            pointer-events: none;
-        }
-        .toast-msg.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+    }
+</style>
 </head>
+
 <body>
 <div class="app-wrapper">
-    <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="logo-area">
             <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
                 <i data-lucide="git-branch" style="color:white;" width="20" height="20"></i>
@@ -230,65 +260,64 @@
         </div>
         
         <nav class="nav-menu">
-            <a href="dashboard.html" class="nav-item">
+            <a href="/dashboard" class="nav-item">
                 <i data-lucide="layout-dashboard"></i>
                 <span class="nav-label">Dashboard</span>
             </a>
-            <a href="tasks.html" class="nav-item">
+            <a href="/tasks" class="nav-item">
                 <i data-lucide="check-square"></i>
                 <span class="nav-label">Tasks</span>
             </a>
-            <a href="workflow.html" class="nav-item">
+            <a href="/workflow" class="nav-item">
                 <i data-lucide="git-branch"></i>
                 <span class="nav-label">Workflow</span>
             </a>
-            <a href="users.html" class="nav-item">
+            <a href="/users" class="nav-item">
                 <i data-lucide="users"></i>
                 <span class="nav-label">Users</span>
             </a>
-            <a href="roles.html" class="nav-item">
+            <a href="/roles" class="nav-item">
                 <i data-lucide="shield"></i>
                 <span class="nav-label">Roles</span>
             </a>
-            <a href="reports.html" class="nav-item active">
+            <a href="/reports" class="nav-item active">
                 <i data-lucide="bar-chart-3"></i>
                 <span class="nav-label">Reports</span>
             </a>
-            <a href="settings.html" class="nav-item">
+            <a href="/settings" class="nav-item">
                 <i data-lucide="settings"></i>
                 <span class="nav-label">Settings</span>
             </a>
         </nav>
         
         <div class="logout-section">
-            <a href="login.html" class="nav-item" style="margin-bottom:0;">
+            <a href="/logout" class="nav-item" style="margin-bottom:0;">
                 <i data-lucide="log-out"></i>
                 <span class="nav-label">Logout</span>
             </a>
         </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- TopBar -->
         <div class="topbar">
+            <button class="menu-toggle" id="menuToggle">
+                <i data-lucide="menu" width="20" height="20" style="color:#0891B2;"></i>
+            </button>
             <h2 class="page-title">Reports Dashboard</h2>
-            <div style="display: flex; gap: 1rem; align-items: center;">
+            <div class="right-section">
                 <div class="search-wrapper">
                     <i data-lucide="search" class="search-icon" width="18" height="18"></i>
                     <input type="text" id="globalSearch" placeholder="Search reports...">
                 </div>
-                <div class="notif-btn" id="notifBtn">
+                <button class="notif-btn" id="notifBtn">
                     <i data-lucide="bell" width="20" height="20" style="color:#0891B2;"></i>
                     <span class="notif-dot"></span>
-                </div>
+                </button>
                 <div class="avatar" id="avatarBtn">JD</div>
             </div>
         </div>
 
-        <!-- Контент страницы Reports -->
         <div class="p-8">
-            <!-- HEADER -->
             <div class="flex justify-between items-center mb-6">
                 <div class="bg-white/60 backdrop-blur-md rounded-2xl border px-5 py-3 shadow-lg">
                     <div class="flex items-center gap-3">
@@ -305,31 +334,29 @@
                 </button>
             </div>
 
-            <!-- STATS -->
-            <div class="grid grid-cols-4 gap-6 mb-6">
+            <div class="grid grid-cols-4 gap-6 mb-6" id="statsContainer">
                 <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-6">
                     <div class="text-gray-500 text-sm">Total Tasks This Month</div>
-                    <div class="text-3xl font-extrabold">248</div>
-                    <div class="text-green-500 text-sm font-semibold">+12.5%</div>
+                    <div class="text-3xl font-extrabold" id="totalTasksMonth">--</div>
+                    <div class="text-green-500 text-sm font-semibold" id="totalTasksChange">--</div>
                 </div>
                 <div class="bg-orange-50 border border-orange-200 rounded-2xl p-6">
                     <div class="text-gray-500 text-sm">Avg Completion Time</div>
-                    <div class="text-3xl font-extrabold">3.2d</div>
-                    <div class="text-green-500 text-sm font-semibold">-8%</div>
+                    <div class="text-3xl font-extrabold" id="avgCompletionTime">--</div>
+                    <div class="text-green-500 text-sm font-semibold" id="avgTimeChange">--</div>
                 </div>
                 <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
                     <div class="text-gray-500 text-sm">Team Efficiency</div>
-                    <div class="text-3xl font-extrabold">87%</div>
-                    <div class="text-green-500 text-sm font-semibold">+5%</div>
+                    <div class="text-3xl font-extrabold" id="teamEfficiency">--</div>
+                    <div class="text-green-500 text-sm font-semibold" id="efficiencyChange">--</div>
                 </div>
                 <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6">
                     <div class="text-gray-500 text-sm">Active Users</div>
-                    <div class="text-3xl font-extrabold">24</div>
+                    <div class="text-3xl font-extrabold" id="activeUsers">--</div>
                     <div class="text-gray-500 text-sm">No change</div>
                 </div>
             </div>
 
-            <!-- LINE CHART -->
             <div class="bg-white rounded-2xl shadow p-6 mb-6">
                 <div class="mb-4">
                     <div class="font-bold text-lg">Tasks Completed Per Week</div>
@@ -338,7 +365,6 @@
                 <canvas id="lineChart" height="100"></canvas>
             </div>
 
-            <!-- BAR CHART -->
             <div class="bg-white rounded-2xl shadow p-6">
                 <div class="mb-4">
                     <div class="font-bold text-lg">Productivity Per User</div>
@@ -353,111 +379,180 @@
 <div id="toastMsg" class="toast-msg"></div>
 
 <script>
-    // Инициализация иконок Lucide
-    lucide.createIcons();
+lucide.createIcons();
 
-    // Функция для показа уведомлений
-    function showToast(msg) {
-        const toast = document.getElementById('toastMsg');
-        toast.innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
+let lineChart = null;
+let barChart = null;
+
+function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// Мобильное меню
+const sidebar = document.getElementById('sidebar');
+const menuToggle = document.getElementById('menuToggle');
+if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+}
+
+// TopBar handlers
+const notifBtn = document.getElementById('notifBtn');
+if (notifBtn) {
+    notifBtn.addEventListener('click', () => showToast('🔔 No new notifications'));
+}
+
+// API функции
+async function fetchAPI(endpoint) {
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
     }
+    return response.json();
+}
 
-    // LINE CHART
-    new Chart(document.getElementById("lineChart"), {
-        type: "line",
-        data: {
-            labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
-            datasets: [{
-                label: "Tasks Completed",
-                data: [28, 35, 42, 38, 45, 52],
-                borderColor: "#06B6D4",
-                backgroundColor: "rgba(6,182,212,0.2)",
-                fill: true,
-                tension: 0.4,
-                pointRadius: 5,
-                pointBackgroundColor: "#06B6D4"
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: { legend: { display: false } }
+// Загрузка статистики
+async function loadStats() {
+    try {
+        const stats = await fetchAPI('/api/reports/stats');
+        document.getElementById('totalTasksMonth').textContent = stats.total_tasks_month;
+        document.getElementById('avgCompletionTime').textContent = `${stats.avg_completion_time}d`;
+        document.getElementById('teamEfficiency').textContent = `${stats.team_efficiency}%`;
+        document.getElementById('activeUsers').textContent = stats.active_users;
+        document.getElementById('totalTasksChange').textContent = stats.total_tasks_change;
+        document.getElementById('avgTimeChange').textContent = stats.avg_time_change;
+        document.getElementById('efficiencyChange').textContent = stats.efficiency_change;
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+}
+
+// Загрузка недельного прогресса
+async function loadWeeklyProgress() {
+    try {
+        const data = await fetchAPI('/api/reports/weekly-progress');
+        
+        if (lineChart) {
+            lineChart.destroy();
         }
-    });
-
-    // BAR CHART
-    new Chart(document.getElementById("barChart"), {
-        type: "bar",
-        data: {
-            labels: ["Sarah", "Michael", "Emma", "James", "Lisa", "David"],
-            datasets: [
-                {
-                    label: "Tasks",
-                    data: [48, 42, 38, 35, 32, 29],
-                    backgroundColor: "#9CCC65",
-                    borderRadius: 8
-                },
-                {
-                    label: "Efficiency",
-                    data: [92, 88, 85, 82, 78, 75],
-                    backgroundColor: "#22C55E",
-                    borderRadius: 8
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: { legend: { position: 'top' } }
-        }
-    });
-
-    // Обработчики для TopBar
-    const searchInput = document.getElementById('globalSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            if (e.target.value.trim()) {
-                showToast(`🔍 Searching: "${e.target.value}"`);
+        
+        lineChart = new Chart(document.getElementById("lineChart"), {
+            type: "line",
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: "Tasks Completed",
+                    data: data.data,
+                    borderColor: "#06B6D4",
+                    backgroundColor: "rgba(6,182,212,0.2)",
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#06B6D4"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } }
             }
         });
+    } catch (error) {
+        console.error('Error loading weekly progress:', error);
     }
+}
 
-    const notifBtn = document.getElementById('notifBtn');
-    if (notifBtn) {
-        notifBtn.addEventListener('click', () => {
-            showToast('🔔 No new notifications');
-        });
-    }
-
-    const avatarBtn = document.getElementById('avatarBtn');
-    if (avatarBtn) {
-        avatarBtn.addEventListener('click', () => {
-            showToast('👤 User profile (demo)');
-        });
-    }
-
-    const exportBtn = document.getElementById('exportPdfBtn');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
-            showToast('📄 Exporting PDF report... (demo)');
-        });
-    }
-
-    // Для навигации: предупреждение при клике на другие страницы (так как их нет в текущей папке)
-    // Но ссылки ведут на другие HTML файлы, что правильно для многостраничного приложения
-    const allNavLinks = document.querySelectorAll('.nav-item');
-    allNavLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            const href = link.getAttribute('href');
-            if (href && href !== 'reports.html') {
-                // Если другие страницы еще не созданы, можно показать сообщение
-                // Но так как это demo, оставляем переходы активными
-                console.log(`Navigating to: ${href}`);
+// Загрузка продуктивности пользователей
+async function loadUserProductivity() {
+    try {
+        const data = await fetchAPI('/api/reports/user-productivity');
+        
+        if (barChart) {
+            barChart.destroy();
+        }
+        
+        barChart = new Chart(document.getElementById("barChart"), {
+            type: "bar",
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: "Tasks Completed",
+                        data: data.tasks,
+                        backgroundColor: "#9CCC65",
+                        borderRadius: 8
+                    },
+                    {
+                        label: "Efficiency (%)",
+                        data: data.efficiency,
+                        backgroundColor: "#22C55E",
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { position: 'top' } }
             }
         });
+    } catch (error) {
+        console.error('Error loading user productivity:', error);
+    }
+}
+
+// Загрузка информации о пользователе
+async function loadUserInfo() {
+    try {
+        const userInfo = await fetchAPI('/api/dashboard/user-info');
+        const avatarBtn = document.getElementById('avatarBtn');
+        if (avatarBtn) {
+            avatarBtn.textContent = userInfo.avatar_initials;
+        }
+    } catch (error) {
+        console.error('Error loading user info:', error);
+    }
+}
+
+// Экспорт отчета
+async function exportReport() {
+    try {
+        const result = await fetchAPI('/api/reports/export');
+        showToast('📄 ' + result.message);
+    } catch (error) {
+        console.error('Error exporting report:', error);
+        showToast('Error exporting report');
+    }
+}
+
+// Обработчики событий
+document.getElementById('exportPdfBtn').addEventListener('click', exportReport);
+
+const searchInput = document.getElementById('globalSearch');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        if (e.target.value.trim()) {
+            showToast(`🔍 Searching: "${e.target.value}"`);
+        }
     });
+}
+
+// Загрузка всех данных
+async function loadAllData() {
+    await loadStats();
+    await loadWeeklyProgress();
+    await loadUserProductivity();
+    await loadUserInfo();
+}
+
+loadAllData();
+
+// Автообновление каждые 30 секунд
+setInterval(loadAllData, 30000);
 </script>
 </body>
 </html>
