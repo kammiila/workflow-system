@@ -21,13 +21,11 @@
             overflow-x: hidden;
         }
 
-        /* Layout */
         .app-wrapper {
             display: flex;
             min-height: 100vh;
         }
 
-        /* SIDEBAR */
         .sidebar {
             position: fixed;
             left: 0;
@@ -42,7 +40,6 @@
             transition: transform 0.3s ease;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             margin-left: 260px;
@@ -51,7 +48,6 @@
             min-height: 100vh;
         }
 
-        /* TopBar */
         .topbar {
             height: 64px;
             background: rgba(255, 255, 255, 0.85);
@@ -85,10 +81,6 @@
             border: none;
         }
 
-        .menu-toggle:hover {
-            background: rgba(6, 182, 212, 0.2);
-        }
-
         .search-wrapper {
             position: relative;
             width: 280px;
@@ -104,12 +96,6 @@
             border-radius: 0.75rem;
             font-size: 0.85rem;
             outline: none;
-            transition: all 0.2s;
-        }
-
-        .search-wrapper input:focus {
-            border-color: #22D3EE;
-            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
         }
 
         .search-icon {
@@ -128,14 +114,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
             cursor: pointer;
             position: relative;
             border: none;
-        }
-
-        .notif-btn:hover {
-            background: linear-gradient(145deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.2));
         }
 
         .notif-dot {
@@ -159,7 +140,6 @@
             justify-content: center;
             color: white;
             font-weight: 700;
-            box-shadow: 0 6px 12px -6px rgba(6, 182, 212, 0.4);
             cursor: pointer;
         }
 
@@ -169,7 +149,6 @@
             align-items: center;
         }
 
-        /* Навигационные элементы */
         .nav-menu {
             flex: 1;
             padding: 1.5rem 0.75rem;
@@ -204,7 +183,6 @@
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(4px);
             color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .logo-area {
@@ -243,7 +221,6 @@
             transform: translateY(0);
         }
 
-        /* Dashboard Styles */
         .card {
             transition: all 0.3s ease;
         }
@@ -260,7 +237,6 @@
             padding-left: 1.5rem;
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -288,7 +264,6 @@
 </head>
 <body>
 <div class="app-wrapper">
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="logo-area">
             <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
@@ -298,47 +273,24 @@
         </div>
         
         <nav class="nav-menu">
-            <a href="dashboard.html" class="nav-item active">
-                <i data-lucide="layout-dashboard"></i>
-                <span class="nav-label">Dashboard</span>
-            </a>
-            <a href="tasks.html" class="nav-item">
-                <i data-lucide="check-square"></i>
-                <span class="nav-label">Tasks</span>
-            </a>
-            <a href="workflow.html" class="nav-item">
-                <i data-lucide="git-branch"></i>
-                <span class="nav-label">Workflow</span>
-            </a>
-            <a href="users.html" class="nav-item">
-                <i data-lucide="users"></i>
-                <span class="nav-label">Users</span>
-            </a>
-            <a href="roles.html" class="nav-item">
-                <i data-lucide="shield"></i>
-                <span class="nav-label">Roles</span>
-            </a>
-            <a href="reports.html" class="nav-item">
-                <i data-lucide="bar-chart-3"></i>
-                <span class="nav-label">Reports</span>
-            </a>
-            <a href="settings.html" class="nav-item">
-                <i data-lucide="settings"></i>
-                <span class="nav-label">Settings</span>
-            </a>
-        </nav>
+    <a href="/dashboard" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+    <a href="/tasks" class="nav-item"><i data-lucide="check-square"></i><span>Tasks</span></a>
+    <a href="/workflow" class="nav-item"><i data-lucide="git-branch"></i><span>Workflow</span></a>
+    <a href="/users" class="nav-item"><i data-lucide="users"></i><span>Users</span></a>
+    <a href="/roles" class="nav-item"><i data-lucide="shield"></i><span>Roles</span></a>
+    <a href="/reports" class="nav-item"><i data-lucide="bar-chart-3"></i><span>Reports</span></a>
+    <a href="/settings" class="nav-item"><i data-lucide="settings"></i><span>Settings</span></a>
+</nav>
         
         <div class="logout-section">
-            <a href="login.html" class="nav-item" style="margin-bottom:0;">
+            <a href="/logout" class="nav-item" style="margin-bottom:0;">
                 <i data-lucide="log-out"></i>
                 <span class="nav-label">Logout</span>
             </a>
         </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- TopBar -->
         <div class="topbar">
             <button class="menu-toggle" id="menuToggle">
                 <i data-lucide="menu" width="20" height="20" style="color:#0891B2;"></i>
@@ -357,22 +309,17 @@
             </div>
         </div>
 
-        <!-- Dashboard Content -->
         <div class="max-w-7xl mx-auto px-4 py-8 w-full">
-            <!-- Header -->
             <div class="mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
-                    <p class="text-gray-500 mt-1">Welcome back! Here's what's happening with your tasks today.</p>
+                    <p class="text-gray-500 mt-1" id="welcomeMessage">Loading dashboard data...</p>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="statsContainer"></div>
 
-            <!-- Charts Row -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Task Progress Chart -->
                 <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-gray-200 p-6 shadow-lg">
                     <div class="flex items-center justify-between mb-4">
                         <div>
@@ -386,22 +333,20 @@
                     <div id="progressChart"></div>
                 </div>
 
-                <!-- Tasks by Status -->
                 <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-gray-200 p-6 shadow-lg">
                     <div class="flex items-center justify-between mb-4">
                         <div>
                             <h3 class="text-gray-900 font-bold mb-1">Tasks by Status</h3>
                             <p class="text-gray-500 text-sm">Current distribution</p>
                         </div>
-                        <div class="px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/10 to-cyan-400/10 text-cyan-600 text-xs font-semibold">
-                            Total: 248
+                        <div class="px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/10 to-cyan-400/10 text-cyan-600 text-xs font-semibold" id="totalTasksBadge">
+                            Total: --
                         </div>
                     </div>
                     <div id="pieChart"></div>
                 </div>
             </div>
 
-            <!-- Recent Activity -->
             <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
                 <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-cyan-500/5 to-transparent">
                     <h3 class="text-gray-900 font-bold">Recent Activity</h3>
@@ -425,7 +370,6 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// Мобильное меню
 const sidebar = document.getElementById('sidebar');
 const menuToggle = document.getElementById('menuToggle');
 if (menuToggle) {
@@ -434,51 +378,48 @@ if (menuToggle) {
     });
 }
 
-// TopBar handlers
 const notifBtn = document.getElementById('notifBtn');
 if (notifBtn) {
     notifBtn.addEventListener('click', () => showToast('🔔 No new notifications'));
 }
-const avatarBtn = document.getElementById('avatarBtn');
-if (avatarBtn) {
-    avatarBtn.addEventListener('click', () => showToast('👤 User profile'));
+
+async function fetchAPI(endpoint) {
+    const response = await fetch(endpoint);
+    if (!response.ok) throw new Error('Network error');
+    return response.json();
 }
 
-// Dashboard Data
-const stats = [
-    { label: 'Total Tasks', value: '248', icon: 'check-square', color: '#06B6D4', change: '+12%', positive: true },
-    { label: 'Completed', value: '168', icon: 'check-circle', color: '#22C55E', change: '+8%', positive: true },
-    { label: 'In Progress', value: '54', icon: 'clock', color: '#F59E0B', change: '+5%', positive: true },
-    { label: 'Overdue', value: '26', icon: 'alert-circle', color: '#EF4444', change: '-3%', positive: false },
-];
+async function loadDashboardData() {
+    try {
+        const [stats, progress, statusData, activities, userInfo] = await Promise.all([
+            fetchAPI('/api/dashboard/stats'),
+            fetchAPI('/api/dashboard/task-progress'),
+            fetchAPI('/api/dashboard/tasks-by-status'),
+            fetchAPI('/api/dashboard/recent-activities'),
+            fetchAPI('/api/dashboard/user-info')
+        ]);
+        
+        updateStats(stats);
+        updateLineChart(progress);
+        updatePieChart(statusData);
+        updateActivities(activities);
+        updateUserInfo(userInfo);
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error loading dashboard data');
+    }
+}
 
-const taskProgressData = [
-    { month: 'Jan', completed: 45, inProgress: 12 },
-    { month: 'Feb', completed: 52, inProgress: 18 },
-    { month: 'Mar', completed: 48, inProgress: 15 },
-    { month: 'Apr', completed: 61, inProgress: 20 },
-    { month: 'May', completed: 55, inProgress: 16 },
-    { month: 'Jun', completed: 67, inProgress: 22 },
-];
-
-const tasksByStatusData = [
-    { name: 'Completed', value: 168, color: '#22C55E', percentage: 68 },
-    { name: 'In Progress', value: 54, color: '#F59E0B', percentage: 22 },
-    { name: 'Overdue', value: 26, color: '#EF4444', percentage: 10 },
-];
-
-const recentActivities = [
-    { user: 'Sarah Johnson', action: 'completed task', task: 'Design system review', time: '5 minutes ago', color: '#06B6D4', initials: 'SJ' },
-    { user: 'Michael Chen', action: 'created task', task: 'API integration', time: '15 minutes ago', color: '#0891B2', initials: 'MC' },
-    { user: 'Emma Williams', action: 'moved task to', task: 'Review stage', time: '32 minutes ago', color: '#22D3EE', initials: 'EW' },
-    { user: 'James Brown', action: 'commented on', task: 'Database migration', time: '1 hour ago', color: '#06B6D4', initials: 'JB' },
-    { user: 'Lisa Anderson', action: 'assigned', task: 'Bug fix #234 to John', time: '2 hours ago', color: '#0891B2', initials: 'LA' },
-];
-
-// Рендер статистики
-function renderStats() {
+function updateStats(stats) {
     const container = document.getElementById('statsContainer');
-    container.innerHTML = stats.map(stat => `
+    const statsConfig = [
+        { label: 'Total Tasks', value: stats.total_tasks, icon: 'check-square', color: '#06B6D4', change: '+12%', positive: true },
+        { label: 'Completed', value: stats.completed, icon: 'check-circle', color: '#22C55E', change: '+8%', positive: true },
+        { label: 'In Progress', value: stats.in_progress, icon: 'clock', color: '#F59E0B', change: '+5%', positive: true },
+        { label: 'Overdue', value: stats.overdue, icon: 'alert-circle', color: '#EF4444', change: '-3%', positive: false },
+    ];
+    
+    container.innerHTML = statsConfig.map(stat => `
         <div class="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 p-6 shadow-lg card">
             <div class="flex items-center justify-between mb-3">
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, ${stat.color}, ${stat.color}dd)">
@@ -493,9 +434,53 @@ function renderStats() {
     lucide.createIcons();
 }
 
-// Рендер линейного графика
+function updateLineChart(data) {
+    window.taskProgressData = data;
+    renderLineChart();
+}
+
+function updatePieChart(data) {
+    window.tasksByStatusData = data;
+    const total = data.reduce((sum, d) => sum + d.value, 0);
+    const badge = document.getElementById('totalTasksBadge');
+    if (badge) badge.innerHTML = `Total: ${total}`;
+    renderPieChart();
+}
+
+function updateActivities(activities) {
+    const container = document.getElementById('activitiesContainer');
+    if (!activities || activities.length === 0) {
+        container.innerHTML = '<div class="p-6 text-center text-gray-500">No recent activities</div>';
+        return;
+    }
+    
+    container.innerHTML = activities.map(activity => `
+        <div class="activity-item p-6 flex items-center gap-4 transition-all duration-200 cursor-pointer">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md transition-transform duration-200 hover:scale-110" style="background: linear-gradient(135deg, ${activity.color}, ${activity.color}dd)">
+                ${activity.initials}
+            </div>
+            <div class="flex-1">
+                <p class="text-gray-900 text-sm">
+                    <span class="font-bold">${activity.user}</span> ${activity.action} <span class="font-semibold text-cyan-600">${activity.task}</span>
+                </p>
+                <p class="text-gray-500 text-xs mt-1">${activity.time}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateUserInfo(userInfo) {
+    const avatarBtn = document.getElementById('avatarBtn');
+    if (avatarBtn) avatarBtn.textContent = userInfo.avatar_initials;
+    const welcomeMsg = document.getElementById('welcomeMessage');
+    if (welcomeMsg) welcomeMsg.textContent = `Welcome back, ${userInfo.full_name}! Here's what's happening with your tasks today.`;
+}
+
 function renderLineChart() {
-    const maxValue = Math.max(...taskProgressData.flatMap(d => [d.completed, d.inProgress]));
+    if (!window.taskProgressData) return;
+    
+    const data = window.taskProgressData;
+    const maxValue = Math.max(...data.flatMap(d => [d.completed, d.inProgress]), 1);
     const container = document.getElementById('progressChart');
     
     container.innerHTML = `
@@ -509,6 +494,8 @@ function renderLineChart() {
     `;
     
     const canvas = document.getElementById('lineChartCanvas');
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
@@ -529,7 +516,6 @@ function renderLineChart() {
         ctx.moveTo(padding.left, y);
         ctx.lineTo(width - padding.right, y);
         ctx.stroke();
-        
         ctx.fillStyle = '#6B7280';
         ctx.font = '10px Arial';
         ctx.fillText(Math.round(maxValue - (i * maxValue / 4)), 5, y + 3);
@@ -541,27 +527,27 @@ function renderLineChart() {
     ctx.lineTo(width - padding.right, height - padding.bottom);
     ctx.stroke();
     
-    taskProgressData.forEach((d, i) => {
-        const x = padding.left + (i * chartWidth / (taskProgressData.length - 1));
+    data.forEach((d, i) => {
+        const x = padding.left + (i * chartWidth / (data.length - 1));
         ctx.fillStyle = '#6B7280';
         ctx.font = '11px Arial';
         ctx.fillText(d.month, x - 10, height - padding.bottom + 20);
     });
     
-    // Линия Completed
+    // Completed line
     ctx.beginPath();
     ctx.strokeStyle = '#22C55E';
     ctx.lineWidth = 3;
-    taskProgressData.forEach((d, i) => {
-        const x = padding.left + (i * chartWidth / (taskProgressData.length - 1));
+    data.forEach((d, i) => {
+        const x = padding.left + (i * chartWidth / (data.length - 1));
         const y = padding.top + chartHeight - (d.completed / maxValue * chartHeight);
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
     });
     ctx.stroke();
     
-    taskProgressData.forEach((d, i) => {
-        const x = padding.left + (i * chartWidth / (taskProgressData.length - 1));
+    data.forEach((d, i) => {
+        const x = padding.left + (i * chartWidth / (data.length - 1));
         const y = padding.top + chartHeight - (d.completed / maxValue * chartHeight);
         ctx.fillStyle = '#22C55E';
         ctx.beginPath();
@@ -569,20 +555,20 @@ function renderLineChart() {
         ctx.fill();
     });
     
-    // Линия In Progress
+    // In Progress line
     ctx.beginPath();
     ctx.strokeStyle = '#06B6D4';
     ctx.lineWidth = 3;
-    taskProgressData.forEach((d, i) => {
-        const x = padding.left + (i * chartWidth / (taskProgressData.length - 1));
+    data.forEach((d, i) => {
+        const x = padding.left + (i * chartWidth / (data.length - 1));
         const y = padding.top + chartHeight - (d.inProgress / maxValue * chartHeight);
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
     });
     ctx.stroke();
     
-    taskProgressData.forEach((d, i) => {
-        const x = padding.left + (i * chartWidth / (taskProgressData.length - 1));
+    data.forEach((d, i) => {
+        const x = padding.left + (i * chartWidth / (data.length - 1));
         const y = padding.top + chartHeight - (d.inProgress / maxValue * chartHeight);
         ctx.fillStyle = '#06B6D4';
         ctx.beginPath();
@@ -591,17 +577,20 @@ function renderLineChart() {
     });
 }
 
-// Рендер круговой диаграммы
 function renderPieChart() {
+    if (!window.tasksByStatusData) return;
+    
+    const data = window.tasksByStatusData;
+    const total = data.reduce((sum, d) => sum + d.value, 0);
     const container = document.getElementById('pieChart');
-    const total = tasksByStatusData.reduce((sum, d) => sum + d.value, 0);
+    
     let currentAngle = -90;
     
     container.innerHTML = `
         <div class="flex flex-col items-center">
             <canvas id="pieCanvas" width="300" height="300" style="width: 250px; height: 250px;"></canvas>
             <div class="flex flex-wrap justify-center gap-4 mt-4">
-                ${tasksByStatusData.map(d => `
+                ${data.map(d => `
                     <div class="flex items-center gap-2">
                         <div class="w-3 h-3 rounded-full" style="background: ${d.color}"></div>
                         <span class="text-sm text-gray-600">${d.name} (${d.percentage}%)</span>
@@ -612,6 +601,8 @@ function renderPieChart() {
     `;
     
     const canvas = document.getElementById('pieCanvas');
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
     const size = 250;
     canvas.width = size;
@@ -619,20 +610,20 @@ function renderPieChart() {
     const center = size / 2;
     const radius = 100;
     
-    tasksByStatusData.forEach((data) => {
-        const angle = (data.value / total) * 360;
+    data.forEach((item) => {
+        const angle = (item.value / total) * 360;
         const startAngle = (currentAngle * Math.PI) / 180;
         const endAngle = ((currentAngle + angle) * Math.PI) / 180;
         
         ctx.beginPath();
-        ctx.fillStyle = data.color;
+        ctx.fillStyle = item.color;
         ctx.moveTo(center, center);
         ctx.arc(center, center, radius, startAngle, endAngle);
         ctx.fill();
         
-        ctx.beginPath();
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 2;
+        ctx.beginPath();
         ctx.moveTo(center, center);
         ctx.arc(center, center, radius, startAngle, startAngle);
         ctx.lineTo(center, center);
@@ -656,34 +647,11 @@ function renderPieChart() {
     ctx.fillText('Total Tasks', center, center + 15);
 }
 
-// Рендер активности
-function renderActivities() {
-    const container = document.getElementById('activitiesContainer');
-    container.innerHTML = recentActivities.map(activity => `
-        <div class="activity-item p-6 flex items-center gap-4 transition-all duration-200 cursor-pointer">
-            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md transition-transform duration-200 hover:scale-110" style="background: linear-gradient(135deg, ${activity.color}, ${activity.color}dd)">
-                ${activity.initials}
-            </div>
-            <div class="flex-1">
-                <p class="text-gray-900 text-sm">
-                    <span class="font-bold">${activity.user}</span> ${activity.action} <span class="font-semibold text-cyan-600">${activity.task}</span>
-                </p>
-                <p class="text-gray-500 text-xs mt-1">${activity.time}</p>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Инициализация
-renderStats();
-renderLineChart();
-renderPieChart();
-renderActivities();
-
-// Адаптация при изменении размера окна
+loadDashboardData();
+setInterval(loadDashboardData, 30000);
 window.addEventListener('resize', () => {
-    renderLineChart();
-    renderPieChart();
+    if (window.taskProgressData) renderLineChart();
+    if (window.tasksByStatusData) renderPieChart();
 });
 </script>
 </body>

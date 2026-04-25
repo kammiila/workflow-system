@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Register</title>
 
 <style>
 * {
@@ -87,16 +87,21 @@ body {
   margin-bottom: 5px;
 }
 
-.input-group input {
+.input-group input, .input-group select {
   width: 100%;
   height: 46px;
   padding: 0 12px;
   border-radius: 10px;
   border: 2px solid #e5e7eb;
   font-size: 14px;
+  background: white;
 }
 
-.input-group input:focus {
+.input-group select {
+  cursor: pointer;
+}
+
+.input-group input:focus, .input-group select:focus {
   border-color: #22D3EE;
   box-shadow: 0 0 0 3px rgba(34,211,238,0.2);
   outline: none;
@@ -112,6 +117,7 @@ button {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  margin-top: 8px;
 }
 
 .footer {
@@ -150,6 +156,12 @@ button {
   background: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
+}
+
+.flash.info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
 }
 
 @media (min-width: 600px) {
@@ -213,11 +225,11 @@ button {
     <div class="header">
       <div class="logo">🌿</div>
       <h1>Procevia</h1>
-      <p>Workflow Management System</p>
+      <p>Create Account</p>
     </div>
 
-    <form class="form" method="POST" action="/login">
-      <h2>Welcome Back</h2>
+    <form class="form" method="POST" action="/register">
+      <h2>Register</h2>
 
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
@@ -227,18 +239,31 @@ button {
 
       <div class="input-group">
         <label>Username</label>
-        <input type="text" name="username" required placeholder="Enter your username">
+        <input type="text" name="username" required placeholder="Choose a username">
+      </div>
+
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" name="email" required placeholder="Enter your email">
       </div>
 
       <div class="input-group">
         <label>Password</label>
-        <input type="password" name="password" required placeholder="Enter your password">
+        <input type="password" name="password" required placeholder="Create a password">
       </div>
 
-      <button type="submit">✨ Sign In</button>
+      <div class="input-group">
+        <label>Role</label>
+        <select name="role">
+          <option value="user">Team Member</option>
+          <option value="admin">Manager/Admin</option>
+        </select>
+      </div>
+
+      <button type="submit">✨ Create Account</button>
 
       <div class="footer">
-        <a href="/register">Create an account</a>
+        <a href="/login">Already have an account? Sign in</a>
       </div>
     </form>
 

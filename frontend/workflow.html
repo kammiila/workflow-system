@@ -1,283 +1,335 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<title>Procevia - Reports Dashboard</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-        background: linear-gradient(145deg, #f1f5f9 0%, #eef2f8 100%);
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
-
-    /* Layout */
-    .app-wrapper {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 260px;
-        background: linear-gradient(135deg, #0891B2, #06B6D4);
-        display: flex;
-        flex-direction: column;
-        z-index: 30;
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s ease;
-    }
-
-    /* MAIN CONTENT */
-    .main-content {
-        flex: 1;
-        margin-left: 260px;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    /* TopBar */
-    .topbar {
-        height: 64px;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(203, 213, 225, 0.6);
-        padding: 0 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-        z-index: 20;
-    }
-
-    .page-title {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #111827;
-        letter-spacing: -0.02em;
-    }
-
-    .menu-toggle {
-        display: none;
-        width: 40px;
-        height: 40px;
-        background: rgba(6, 182, 212, 0.1);
-        border-radius: 0.75rem;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border: none;
-    }
-
-    .menu-toggle:hover {
-        background: rgba(6, 182, 212, 0.2);
-    }
-
-    .search-wrapper {
-        position: relative;
-        width: 280px;
-    }
-
-    .search-wrapper input {
-        width: 100%;
-        height: 40px;
-        padding-left: 2.5rem;
-        padding-right: 1rem;
-        background: linear-gradient(135deg, #ECFEFF, white);
-        border: 1px solid rgba(6, 182, 212, 0.25);
-        border-radius: 0.75rem;
-        font-size: 0.85rem;
-        outline: none;
-        transition: all 0.2s;
-    }
-
-    .search-wrapper input:focus {
-        border-color: #22D3EE;
-        box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #06B6D4;
-    }
-
-    .notif-btn {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
-        border-radius: 0.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        cursor: pointer;
-        position: relative;
-        border: none;
-    }
-
-    .notif-btn:hover {
-        background: linear-gradient(145deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.2));
-    }
-
-    .notif-dot {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 8px;
-        height: 8px;
-        background: #EF4444;
-        border-radius: 50%;
-        border: 2px solid white;
-    }
-
-    .avatar {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #22D3EE, #06B6D4);
-        border-radius: 0.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        box-shadow: 0 6px 12px -6px rgba(6, 182, 212, 0.4);
-        cursor: pointer;
-    }
-
-    .right-section {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    /* Навигационные элементы */
-    .nav-menu {
-        flex: 1;
-        padding: 1.5rem 0.75rem;
-    }
-
-    .nav-item {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        border-radius: 0.75rem;
-        background: transparent;
-        border: none;
-        color: rgba(255, 255, 255, 0.8);
-        transition: all 0.2s;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-weight: 500;
-        text-align: left;
-        text-decoration: none;
-    }
-
-    .nav-item:hover {
-        background: rgba(255, 255, 255, 0.12);
-        color: white;
-        transform: translateX(4px);
-    }
-
-    .nav-item.active {
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(4px);
-        color: white;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .logo-area {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1.5rem 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .logout-section {
-        padding: 1rem 0.75rem 1.5rem 0.75rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.15);
-        margin-top: auto;
-    }
-
-    .toast-msg {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        background: #1e293b;
-        color: white;
-        padding: 0.6rem 1.5rem;
-        border-radius: 2rem;
-        font-size: 0.8rem;
-        font-weight: 500;
-        z-index: 999;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: 0.2s;
-        pointer-events: none;
-    }
-
-    .toast-msg.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* Адаптивность */
-    @media (max-width: 768px) {
-        .sidebar {
-            transform: translateX(-100%);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Procevia - Workflow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .sidebar.open {
-            transform: translateX(0);
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: linear-gradient(145deg, #f1f5f9 0%, #eef2f8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .main-content {
-            margin-left: 0;
-        }
-        .menu-toggle {
+
+        .app-wrapper {
             display: flex;
+            min-height: 100vh;
         }
-        .search-wrapper {
-            display: none;
-        }
-        .page-title {
-            font-size: 1.2rem;
-        }
-        .right-section {
-            gap: 0.5rem;
-        }
-        .grid-cols-4 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-</style>
-</head>
 
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px;
+            background: linear-gradient(135deg, #0891B2, #06B6D4);
+            display: flex;
+            flex-direction: column;
+            z-index: 30;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(203, 213, 225, 0.6);
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 0.75rem;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            height: 40px;
+            padding-left: 2.5rem;
+            padding-right: 1rem;
+            background: linear-gradient(135deg, #ECFEFF, white);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #06B6D4;
+        }
+
+        .notif-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            border: none;
+        }
+
+        .notif-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #22D3EE, #06B6D4);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .right-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 1.5rem 0.75rem;
+        }
+
+        .nav-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.75rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            color: white;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .logout-section {
+            padding: 1rem 0.75rem 1.5rem 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: auto;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.2s;
+            pointer-events: none;
+        }
+
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Kanban Styles */
+        .workflow-container {
+            padding: 1rem;
+            overflow-x: auto;
+            flex: 1;
+        }
+
+        .kanban-container {
+            display: flex;
+            gap: 1rem;
+            padding: 0.5rem 0.25rem 1rem 0.25rem;
+            min-width: min-content;
+        }
+
+        .kanban-column {
+            min-width: 280px;
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .kanban-column.drag-over {
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 1rem;
+        }
+
+        .column-content {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(203, 213, 225, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .column-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .column-content::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .column-content::-webkit-scrollbar-thumb {
+            background: #06B6D4;
+            border-radius: 10px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+            cursor: grab;
+        }
+
+        .task-card:active {
+            cursor: grabbing;
+        }
+
+        .task-card.dragging {
+            opacity: 0.4;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.15);
+        }
+
+        .priority-high { background-color: #FEE2E2; color: #DC2626; }
+        .priority-medium { background-color: #FEF3C7; color: #D97706; }
+        .priority-low { background-color: #D1FAE5; color: #059669; }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            .search-wrapper {
+                display: none;
+            }
+            .page-title {
+                font-size: 1.2rem;
+            }
+            .kanban-column {
+                min-width: 260px;
+                width: 260px;
+            }
+        }
+    </style>
+</head>
 <body>
 <div class="app-wrapper">
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="logo-area">
             <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
@@ -287,56 +339,33 @@
         </div>
         
         <nav class="nav-menu">
-            <a href="dashboard.html" class="nav-item">
-                <i data-lucide="layout-dashboard"></i>
-                <span class="nav-label">Dashboard</span>
-            </a>
-            <a href="tasks.html" class="nav-item">
-                <i data-lucide="check-square"></i>
-                <span class="nav-label">Tasks</span>
-            </a>
-            <a href="workflow.html" class="nav-item active">
-                <i data-lucide="git-branch"></i>
-                <span class="nav-label">Workflow</span>
-            </a>
-            <a href="users.html" class="nav-item">
-                <i data-lucide="users"></i>
-                <span class="nav-label">Users</span>
-            </a>
-            <a href="roles.html" class="nav-item">
-                <i data-lucide="shield"></i>
-                <span class="nav-label">Roles</span>
-            </a>
-            <a href="reports.html" class="nav-item">
-                <i data-lucide="bar-chart-3"></i>
-                <span class="nav-label">Reports</span>
-            </a>
-            <a href="settings.html" class="nav-item">
-                <i data-lucide="settings"></i>
-                <span class="nav-label">Settings</span>
-            </a>
-        </nav>
+    <a href="/dashboard" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+    <a href="/tasks" class="nav-item"><i data-lucide="check-square"></i><span>Tasks</span></a>
+    <a href="/workflow" class="nav-item"><i data-lucide="git-branch"></i><span>Workflow</span></a>
+    <a href="/users" class="nav-item"><i data-lucide="users"></i><span>Users</span></a>
+    <a href="/roles" class="nav-item"><i data-lucide="shield"></i><span>Roles</span></a>
+    <a href="/reports" class="nav-item"><i data-lucide="bar-chart-3"></i><span>Reports</span></a>
+    <a href="/settings" class="nav-item"><i data-lucide="settings"></i><span>Settings</span></a>
+</nav>
         
         <div class="logout-section">
-            <a href="login.html" class="nav-item" style="margin-bottom:0;">
+            <a href="/logout" class="nav-item" style="margin-bottom:0;">
                 <i data-lucide="log-out"></i>
                 <span class="nav-label">Logout</span>
             </a>
         </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- TopBar -->
         <div class="topbar">
             <button class="menu-toggle" id="menuToggle">
                 <i data-lucide="menu" width="20" height="20" style="color:#0891B2;"></i>
             </button>
-            <h2 class="page-title">Reports Dashboard</h2>
+            <h2 class="page-title">Workflow</h2>
             <div class="right-section">
                 <div class="search-wrapper">
                     <i data-lucide="search" class="search-icon" width="18" height="18"></i>
-                    <input type="text" id="globalSearch" placeholder="Search reports...">
+                    <input type="text" id="globalSearch" placeholder="Search tasks...">
                 </div>
                 <button class="notif-btn" id="notifBtn">
                     <i data-lucide="bell" width="20" height="20" style="color:#0891B2;"></i>
@@ -346,65 +375,78 @@
             </div>
         </div>
 
-        <!-- Контент страницы Reports -->
-        <div class="p-8">
-            <!-- HEADER -->
-            <div class="flex justify-between items-center mb-6">
-                <div class="bg-white/60 backdrop-blur-md rounded-2xl border px-5 py-3 shadow-lg">
+        <div class="workflow-container">
+            <div class="mb-4 bg-white/60 backdrop-blur-md rounded-xl border border-gray-200 p-4 shadow-sm">
+                <div class="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">Kanban Board</h3>
+                        <p class="text-gray-500 text-xs">Drag and drop tasks between columns</p>
+                    </div>
                     <div class="flex items-center gap-3">
-                        <i data-lucide="trending-up" class="text-cyan-500 w-6 h-6"></i>
-                        <div>
-                            <div class="text-sm font-bold text-gray-900">Analytics Dashboard</div>
-                            <div class="text-xs text-gray-500">Real-time insights</div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="text-gray-500 text-xs">Total Tasks:</span>
+                            <span class="px-2 py-0.5 rounded-lg bg-gradient-to-r from-cyan-500/20 to-cyan-400/10 text-cyan-600 font-bold text-sm" id="totalTasksCount">0</span>
                         </div>
+                        <button id="refreshBtn" class="px-3 py-1.5 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition flex items-center gap-1 text-sm">
+                            <i data-lucide="refresh-cw" width="14" height="14"></i>
+                            Refresh
+                        </button>
                     </div>
                 </div>
-                <button id="exportPdfBtn" class="flex items-center gap-2 px-5 h-11 bg-gradient-to-r from-cyan-500 to-cyan-300 text-white rounded-xl font-semibold hover:shadow-lg transition">
-                    <i data-lucide="file-text" class="w-4 h-4"></i>
-                    Export PDF
-                </button>
             </div>
 
-            <!-- STATS -->
-            <div class="grid grid-cols-4 gap-6 mb-6">
-                <div class="bg-cyan-50 border border-cyan-200 rounded-2xl p-6">
-                    <div class="text-gray-500 text-sm">Total Tasks This Month</div>
-                    <div class="text-3xl font-extrabold">248</div>
-                    <div class="text-green-500 text-sm font-semibold">+12.5%</div>
+            <div class="kanban-container" id="kanbanContainer">
+                <div class="kanban-column" data-status="todo" id="column-todo" ondragover="event.preventDefault()" ondrop="dropTask(event, 'todo')">
+                    <div class="column-content">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: #6B7280"></div>
+                                <h3 class="text-gray-900 font-semibold text-sm">To Do</h3>
+                            </div>
+                            <div class="px-2 py-0.5 rounded-lg text-xs font-semibold" style="background-color: #F3F4F6; color: #6B7280" id="todoCount">0</div>
+                        </div>
+                        <div class="tasks-container min-h-[400px]" id="todoTasks"></div>
+                    </div>
                 </div>
-                <div class="bg-orange-50 border border-orange-200 rounded-2xl p-6">
-                    <div class="text-gray-500 text-sm">Avg Completion Time</div>
-                    <div class="text-3xl font-extrabold">3.2d</div>
-                    <div class="text-green-500 text-sm font-semibold">-8%</div>
-                </div>
-                <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
-                    <div class="text-gray-500 text-sm">Team Efficiency</div>
-                    <div class="text-3xl font-extrabold">87%</div>
-                    <div class="text-green-500 text-sm font-semibold">+5%</div>
-                </div>
-                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6">
-                    <div class="text-gray-500 text-sm">Active Users</div>
-                    <div class="text-3xl font-extrabold">24</div>
-                    <div class="text-gray-500 text-sm">No change</div>
-                </div>
-            </div>
 
-            <!-- LINE CHART -->
-            <div class="bg-white rounded-2xl shadow p-6 mb-6">
-                <div class="mb-4">
-                    <div class="font-bold text-lg">Tasks Completed Per Week</div>
-                    <div class="text-sm text-gray-500">Weekly task completion trend over 6 weeks</div>
+                <div class="kanban-column" data-status="in_progress" id="column-inprogress" ondragover="event.preventDefault()" ondrop="dropTask(event, 'in_progress')">
+                    <div class="column-content">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: #06B6D4"></div>
+                                <h3 class="text-gray-900 font-semibold text-sm">In Progress</h3>
+                            </div>
+                            <div class="px-2 py-0.5 rounded-lg text-xs font-semibold" style="background-color: #ECFEFF; color: #06B6D4" id="progressCount">0</div>
+                        </div>
+                        <div class="tasks-container min-h-[400px]" id="progressTasks"></div>
+                    </div>
                 </div>
-                <canvas id="lineChart" height="100"></canvas>
-            </div>
 
-            <!-- BAR CHART -->
-            <div class="bg-white rounded-2xl shadow p-6">
-                <div class="mb-4">
-                    <div class="font-bold text-lg">Productivity Per User</div>
-                    <div class="text-sm text-gray-500">Individual performance metrics</div>
+                <div class="kanban-column" data-status="review" id="column-review" ondragover="event.preventDefault()" ondrop="dropTask(event, 'review')">
+                    <div class="column-content">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: #F59E0B"></div>
+                                <h3 class="text-gray-900 font-semibold text-sm">Review</h3>
+                            </div>
+                            <div class="px-2 py-0.5 rounded-lg text-xs font-semibold" style="background-color: #FFFBEB; color: #F59E0B" id="reviewCount">0</div>
+                        </div>
+                        <div class="tasks-container min-h-[400px]" id="reviewTasks"></div>
+                    </div>
                 </div>
-                <canvas id="barChart" height="100"></canvas>
+
+                <div class="kanban-column" data-status="done" id="column-done" ondragover="event.preventDefault()" ondrop="dropTask(event, 'done')">
+                    <div class="column-content">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: #22C55E"></div>
+                                <h3 class="text-gray-900 font-semibold text-sm">Done</h3>
+                            </div>
+                            <div class="px-2 py-0.5 rounded-lg text-xs font-semibold" style="background-color: #F0FDF4; color: #22C55E" id="doneCount">0</div>
+                        </div>
+                        <div class="tasks-container min-h-[400px]" id="doneTasks"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -413,124 +455,226 @@
 <div id="toastMsg" class="toast-msg"></div>
 
 <script>
-// Инициализация иконок
 lucide.createIcons();
 
-// Функция показа уведомлений
-function showToast(msg) {
+let draggedTaskId = null;
+let currentTasks = [];
+
+function showToast(msg, isError = false) {
     const toast = document.getElementById('toastMsg');
     toast.innerText = msg;
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2000);
+    toast.style.background = isError ? '#DC2626' : '#1e293b';
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.style.background = '#1e293b';
+    }, 2000);
 }
 
 // Мобильное меню
 const sidebar = document.getElementById('sidebar');
 const menuToggle = document.getElementById('menuToggle');
-
 if (menuToggle) {
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-    });
-}
-
-// Обработчики TopBar
-const searchInput = document.getElementById('globalSearch');
-if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        if (e.target.value.trim()) {
-            showToast(`🔍 Searching: "${e.target.value}"`);
-        }
-    });
+    menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
 }
 
 const notifBtn = document.getElementById('notifBtn');
 if (notifBtn) {
-    notifBtn.addEventListener('click', () => {
-        showToast('🔔 No new notifications');
-    });
+    notifBtn.addEventListener('click', () => showToast('🔔 No new notifications'));
 }
 
-const avatarBtn = document.getElementById('avatarBtn');
-if (avatarBtn) {
-    avatarBtn.addEventListener('click', () => {
-        showToast('👤 User profile');
+// API функции
+async function fetchAPI(endpoint, options = {}) {
+    const response = await fetch(endpoint, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options
     });
+    if (!response.ok) throw new Error('Network error');
+    return response.json();
 }
 
-const exportBtn = document.getElementById('exportPdfBtn');
-if (exportBtn) {
-    exportBtn.addEventListener('click', () => {
-        showToast('📄 Exporting PDF report...');
-    });
-}
-
-/* LINE CHART */
-new Chart(document.getElementById("lineChart"), {
-    type: "line",
-    data: {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
-        datasets: [{
-            label: "Tasks Completed",
-            data: [28, 35, 42, 38, 45, 52],
-            borderColor: "#06B6D4",
-            backgroundColor: "rgba(6,182,212,0.2)",
-            fill: true,
-            tension: 0.4,
-            pointRadius: 5,
-            pointBackgroundColor: "#06B6D4"
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { display: false } }
+// Загрузка информации о пользователе
+async function loadUserInfo() {
+    try {
+        const userInfo = await fetchAPI('/api/dashboard/user-info');
+        const avatarBtn = document.getElementById('avatarBtn');
+        if (avatarBtn) avatarBtn.textContent = userInfo.avatar_initials;
+    } catch (error) {
+        console.error('Error loading user info:', error);
     }
-});
+}
 
-/* BAR CHART */
-new Chart(document.getElementById("barChart"), {
-    type: "bar",
-    data: {
-        labels: ["Sarah", "Michael", "Emma", "James", "Lisa", "David"],
-        datasets: [
-            {
-                label: "Tasks",
-                data: [48, 42, 38, 35, 32, 29],
-                backgroundColor: "#9CCC65",
-                borderRadius: 8
-            },
-            {
-                label: "Efficiency",
-                data: [92, 88, 85, 82, 78, 75],
-                backgroundColor: "#22C55E",
-                borderRadius: 8
-            }
-        ]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { position: 'top' } }
+// Загрузка задач для канбан-доски
+async function loadWorkflowTasks() {
+    try {
+        const tasks = await fetchAPI('/api/tasks');
+        currentTasks = tasks;
+        renderKanban(tasks);
+        updateTotalCount(tasks);
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        showToast('Error loading workflow data', true);
     }
-});
+}
 
-// Для навигации: предупреждение при клике на другие страницы (если они не созданы)
-const allNavLinks = document.querySelectorAll('.nav-item');
-allNavLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href');
-        if (href && href !== 'reports.html') {
-            // Проверяем, залогинен ли пользователь
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (!isLoggedIn && href !== 'login.html') {
-                e.preventDefault();
-                showToast('⚠️ Please login first');
-            }
+// Рендер канбан-досок
+function renderKanban(tasks) {
+    const todoTasks = tasks.filter(t => t.status === 'To Do' || t.status === 'Overdue');
+    const progressTasks = tasks.filter(t => t.status === 'In Progress');
+    const reviewTasks = tasks.filter(t => t.status === 'Review');
+    const doneTasks = tasks.filter(t => t.status === 'Completed');
+    
+    document.getElementById('todoCount').textContent = todoTasks.length;
+    document.getElementById('progressCount').textContent = progressTasks.length;
+    document.getElementById('reviewCount').textContent = reviewTasks.length;
+    document.getElementById('doneCount').textContent = doneTasks.length;
+    
+    renderTaskColumn('todoTasks', todoTasks);
+    renderTaskColumn('progressTasks', progressTasks);
+    renderTaskColumn('reviewTasks', reviewTasks);
+    renderTaskColumn('doneTasks', doneTasks);
+    
+    lucide.createIcons();
+}
+
+function renderTaskColumn(containerId, tasks) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    if (tasks.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs">No tasks</div>`;
+        return;
+    }
+    
+    container.innerHTML = tasks.map(task => `
+        <div class="task-card" 
+             draggable="true"
+             data-task-id="${task.id}"
+             ondragstart="dragStart(event, ${task.id})"
+             ondragend="dragEnd(event)">
+            <div class="flex justify-between items-start mb-2">
+                <h4 class="font-semibold text-gray-800 text-sm">${escapeHtml(task.name)}</h4>
+                <span class="px-1.5 py-0.5 rounded text-xs font-semibold priority-${task.priority.toLowerCase()}">${task.priority}</span>
+            </div>
+            <p class="text-gray-500 text-xs mb-2 truncate">${escapeHtml(task.assignee)}</p>
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                    <i data-lucide="calendar" width="10" height="10"></i>
+                    <span>${task.deadline || 'No date'}</span>
+                </div>
+                <div class="w-6 h-6 rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                    ${task.assignee_initials}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function updateTotalCount(tasks) {
+    document.getElementById('totalTasksCount').textContent = tasks.length;
+}
+
+// Drag and Drop функции
+function dragStart(event, taskId) {
+    draggedTaskId = taskId;
+    event.dataTransfer.setData('text/plain', taskId);
+    event.target.classList.add('dragging');
+}
+
+function dragEnd(event) {
+    event.target.classList.remove('dragging');
+    draggedTaskId = null;
+}
+
+// Функция Drop
+window.dropTask = async function(event, newStatusValue) {
+    event.preventDefault();
+    
+    const taskId = draggedTaskId;
+    if (!taskId) return;
+    
+    // Маппинг статусов для API
+    const statusMap = {
+        'todo': 'To Do',
+        'in_progress': 'In Progress',
+        'review': 'Review',
+        'done': 'Completed'
+    };
+    
+    const newStatusText = statusMap[newStatusValue];
+    if (!newStatusText) return;
+    
+    // Находим текущую задачу
+    const task = currentTasks.find(t => t.id === taskId);
+    if (!task) return;
+    
+    // Если статус не изменился, не обновляем
+    if (task.status === newStatusText) return;
+    
+    try {
+        await fetchAPI(`/api/tasks/${taskId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ status: newStatusText })
+        });
+        showToast(`✅ Task moved to ${newStatusText}`);
+        await loadWorkflowTasks();
+    } catch (error) {
+        console.error('Error updating task status:', error);
+        showToast('❌ Error moving task', true);
+    }
+    
+    draggedTaskId = null;
+};
+
+// Поиск задач
+const searchInput = document.getElementById('globalSearch');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        if (!searchTerm) {
+            renderKanban(currentTasks);
+            updateTotalCount(currentTasks);
+            return;
         }
+        const filteredTasks = currentTasks.filter(task => 
+            task.name.toLowerCase().includes(searchTerm) || 
+            task.assignee.toLowerCase().includes(searchTerm)
+        );
+        renderKanban(filteredTasks);
+        updateTotalCount(filteredTasks);
     });
-});
-</script>
+}
 
+// Обновление
+const refreshBtn = document.getElementById('refreshBtn');
+if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => {
+        loadWorkflowTasks();
+        showToast('🔄 Workflow refreshed');
+    });
+}
+
+// Инициализация
+async function init() {
+    await loadUserInfo();
+    await loadWorkflowTasks();
+}
+
+init();
+
+// Автообновление каждые 30 секунд
+setInterval(() => {
+    if (searchInput && !searchInput.value) {
+        loadWorkflowTasks();
+    }
+}, 30000);
+</script>
 </body>
 </html>
