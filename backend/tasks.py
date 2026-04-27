@@ -56,9 +56,15 @@ def get_tasks():
             elif row['status'] == 'in_progress':
                 status_display = 'In Progress'
             elif row['status'] == 'in_review':
-                status_display = 'Review'
+                status_display = 'In Review'
         
-        stage_map = {'pending': 'Planning', 'in_progress': 'Development', 'in_review': 'Review', 'completed': 'Done'}
+        # Map internal status codes to workflow stage display names (use canonical names stored in workflow_statuses)
+        status_to_stage = {
+            'pending': 'To Do',
+            'in_progress': 'In Progress',
+            'in_review': 'In Review',
+            'completed': 'Done'
+        }
         
         tasks.append({
             'id': row['id'],
@@ -66,7 +72,8 @@ def get_tasks():
             'description': row['description'] or '',
             'assignee': row['assignee_name'] if row['assignee_name'] else 'Unassigned',
             'assignee_initials': row['assignee_name'][:2].upper() if row['assignee_name'] else 'U',
-            'stage': stage_map.get(row['status'], 'Planning'),
+            'stage': status_to_stage.get(row['status'], 'To Do'),
+            'status_raw': row['status'],
             'deadline': row['due_date'] if row['due_date'] else '',
             'priority': row['priority'].capitalize() if row['priority'] else 'Medium',
             'status': status_display,

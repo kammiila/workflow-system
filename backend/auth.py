@@ -12,11 +12,14 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
+        # allow login by username or email
         user = get_user_by_username(username)
         
         if user and check_password_hash(user.password, password):
-            login_user(user)
-            flash('Logged in successfully!', 'success')
+            # reload user to ensure latest role is set
+            from models import get_user_by_id
+            fresh = get_user_by_id(user.id)
+            login_user(fresh or user)
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password', 'danger')

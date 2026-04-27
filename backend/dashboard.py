@@ -6,6 +6,11 @@ import json
 import os
 from datetime import datetime, timedelta
 import random
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from flask import send_file
+from models import get_permissions_for_role
 
 DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'database.db')
 
@@ -101,22 +106,36 @@ def get_tasks_by_status():
 def get_recent_activities():
     conn = get_db_connection()
     c = conn.cursor()
-    
-    c.execute('SELECT user_name, action, task_title, created_at FROM activities ORDER BY created_at DESC LIMIT 5')
-    
+    # Admins see all activities, regular users see activities related to their tasks
     activities = []
     colors = ['#06B6D4', '#0891B2', '#22D3EE', '#0EA5E9', '#0284C7']
-    
-    for i, row in enumerate(c.fetchall()):
+    if current_user.role == 'admin':
+        c.execute('SELECT user_name, action, task_title, created_at FROM activities ORDER BY created_at DESC LIMIT 10')
+        rows = c.fetchall()
+    else:
+        # get activities where user_id = current_user.id or task_title in user's tasks
+        c.execute('SELECT t.title FROM tasks t WHERE t.assigned_to = ? OR t.created_by = ?', (current_user.id, current_user.id))
+        task_titles = [r['title'] for r in c.fetchall()]
+        if task_titles:
+            placeholders = ','.join('?' for _ in task_titles)
+            query = f"SELECT user_name, action, task_title, created_at FROM activities WHERE task_title IN ({placeholders}) ORDER BY created_at DESC LIMIT 10"
+            c.execute(query, task_titles)
+            rows = c.fetchall()
+        else:
+            c.execute('SELECT user_name, action, task_title, created_at FROM activities WHERE user_id = ? ORDER BY created_at DESC LIMIT 10', (current_user.id,))
+            rows = c.fetchall()
+
+    for i, row in enumerate(rows):
+        uname = row['user_name'] or 'Unknown'
         activities.append({
-            'user': row['user_name'],
+            'user': uname,
             'action': row['action'],
             'task': row['task_title'],
-            'time': 'recently',
+            'time': row['created_at'],
             'color': colors[i % len(colors)],
-            'initials': row['user_name'][:2].upper()
+            'initials': uname[:2].upper()
         })
-    
+
     conn.close()
     return jsonify(activities)
 
@@ -164,19 +183,112 @@ def get_reports_stats():
 @dashboard_api.route('/api/reports/weekly-progress')
 @login_required
 def get_weekly_progress():
-    return jsonify({
-        'labels': ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
-        'data': [28, 35, 42, 38, 45, 52]
-    })
+    conn = get_db_connection()
+    c = conn.cursor()
+    today = datetime.now().date()
+    labels = []
+    data = []
+    # last 6 weeks (ending this week)
+    for i in range(5, -1, -1):
+        week_end = today - timedelta(days=today.weekday()) - timedelta(weeks=i) + timedelta(days=6)
+        week_start = week_end - timedelta(days=6)
+        labels.append(f"{week_start.strftime('%b %d')} - {week_end.strftime('%b %d')}")
+        c.execute("SELECT COUNT(*) as count FROM tasks WHERE status = 'completed' AND date(completed_at) BETWEEN ? AND ?", (week_start.isoformat(), week_end.isoformat()))
+        row = c.fetchone()
+        data.append(row['count'] if row else 0)
+    conn.close()
+    return jsonify({'labels': labels, 'data': data})
 
 @dashboard_api.route('/api/reports/user-productivity')
 @login_required
 def get_user_productivity():
-    return jsonify({
-        'labels': ['Sarah', 'Michael', 'Emma', 'Admin'],
-        'tasks': [48, 42, 38, 52],
-        'efficiency': [92, 88, 85, 95]
-    })
+    conn = get_db_connection()
+    c = conn.cursor()
+    # get all users
+    c.execute('SELECT id, full_name FROM users')
+    users = c.fetchall()
+    labels = []
+    tasks_completed = []
+    efficiency = []
+    for u in users:
+        uid = u['id']
+        name = u['full_name'] or 'User'
+        labels.append(name)
+        c.execute("SELECT COUNT(*) as completed FROM tasks WHERE assigned_to = ? AND status = 'completed'", (uid,))
+        completed = c.fetchone()['completed']
+        c.execute("SELECT COUNT(*) as total FROM tasks WHERE assigned_to = ?", (uid,))
+        total = c.fetchone()['total']
+        tasks_completed.append(completed)
+        eff = round((completed / total * 100), 1) if total and total > 0 else 0.0
+        efficiency.append(eff)
+    conn.close()
+    return jsonify({'labels': labels, 'tasks': tasks_completed, 'efficiency': efficiency})
+
+
+@dashboard_api.route('/api/export/reports/pdf', methods=['GET'])
+@login_required
+def export_reports_pdf():
+    # check permission: allow admin and manager
+    if current_user.role not in ('admin', 'manager'):
+        return jsonify({'error': 'Access denied'}), 403
+
+    # generate a simple PDF report
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) as total FROM tasks")
+    total_tasks = c.fetchone()['total']
+    c.execute("SELECT COUNT(*) as completed FROM tasks WHERE status = 'completed'")
+    completed = c.fetchone()['completed']
+    c.execute("SELECT COUNT(*) as active FROM users")
+    row = c.fetchone()
+    active_users = row['active'] if row else 0
+
+    # collect user productivity for table
+    c.execute('SELECT id, full_name FROM users')
+    users = c.fetchall()
+    user_stats = []
+    for u in users:
+        uid = u['id']
+        name = u['full_name'] or 'User'
+        c.execute("SELECT COUNT(*) as completed FROM tasks WHERE assigned_to = ? AND status = 'completed'", (uid,))
+        comp = c.fetchone()['completed']
+        c.execute("SELECT COUNT(*) as total FROM tasks WHERE assigned_to = ?", (uid,))
+        tot = c.fetchone()['total']
+        eff = round((comp / tot * 100), 1) if tot and tot > 0 else 0.0
+        user_stats.append((name, comp, tot, eff))
+    conn.close()
+
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    p.setFont('Helvetica-Bold', 18)
+    p.drawString(72, height - 72, 'Procevia Report')
+    p.setFont('Helvetica', 10)
+    p.drawString(72, height - 96, f'Generated by: {current_user.username} on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    p.drawString(72, height - 116, f'Total tasks: {total_tasks}   Completed: {completed}   Active users: {active_users}')
+
+    # table header
+    y = height - 150
+    p.setFont('Helvetica-Bold', 11)
+    p.drawString(72, y, 'User')
+    p.drawString(250, y, 'Completed')
+    p.drawString(340, y, 'Total')
+    p.drawString(420, y, 'Efficiency (%)')
+    p.setFont('Helvetica', 10)
+    y -= 18
+    for name, comp, tot, eff in user_stats:
+        if y < 72:
+            p.showPage()
+            y = height - 72
+        p.drawString(72, y, str(name))
+        p.drawString(250, y, str(comp))
+        p.drawString(340, y, str(tot))
+        p.drawString(420, y, str(eff))
+        y -= 16
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name='procevia_report.pdf', mimetype='application/pdf')
 
 @dashboard_api.route('/api/reports/export')
 @login_required

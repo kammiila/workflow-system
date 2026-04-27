@@ -217,9 +217,10 @@ def init_db():
     print("Database initialized successfully!")
 
 def get_user_by_username(username):
+    # Accept either username or email for lookup (users may login with either)
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    c.execute('SELECT id, username, email, password, role, full_name, avatar_color FROM users WHERE username = ?', (username,))
+    c.execute('SELECT id, username, email, password, role, full_name, avatar_color FROM users WHERE username = ? OR email = ?', (username, username))
     user = c.fetchone()
     conn.close()
     if user:
@@ -235,6 +236,22 @@ def get_user_by_id(user_id):
     if user:
         return User(user[0], user[1], user[2], user[3], user[4], user[5], user[6])
     return None
+
+
+def get_permissions_for_role(role_name):
+    """Return a set of permission names for a given role name."""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute('SELECT id FROM roles WHERE name = ?', (role_name,))
+    row = c.fetchone()
+    if not row:
+        conn.close()
+        return set()
+    role_id = row[0]
+    c.execute('SELECT permission_name FROM permissions WHERE role_id = ?', (role_id,))
+    perms = {r[0] for r in c.fetchall()}
+    conn.close()
+    return perms
 
 class User(UserMixin):
     def __init__(self, id, username, email, password, role, full_name=None, avatar_color='#06B6D4'):
